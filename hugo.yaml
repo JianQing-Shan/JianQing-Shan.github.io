@@ -1,6 +1,7 @@
 baseURL: "https://JianQing-Shan.github.io/"
 title: "我的博客"
 theme: "PaperMod"
+publishDir: "docs"
 locale: "zh-cn"
 
 params:
