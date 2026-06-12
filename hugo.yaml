@@ -10,10 +10,17 @@ taxonomies:
 params:
   hideFooter: true
   mainSections: ["posts"]
+  ShowToc: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
   profileMode:
     enabled: true
     title: "青山的博客"
     subtitle: "记录思考与故事"
+    imageUrl: "/img/avatar.jpeg"
+    imageWidth: 120
+    imageHeight: 120
   socialIcons:
     - name: "github"
       url: "https://github.com/JianQing-Shan"
