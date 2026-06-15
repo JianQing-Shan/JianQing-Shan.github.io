@@ -3,6 +3,7 @@ title: "山渐清"
 theme: "PaperMod"
 publishDir: "docs"
 locale: "zh-cn"
+buildFuture: true
 
 taxonomies:
   tag: tags
