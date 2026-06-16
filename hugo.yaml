@@ -13,7 +13,7 @@ params:
   mainSections: ["posts"]
   ShowToc: true
   ShowPostNavLinks: true
-  ShowBreadCrumbs: true
+  ShowBreadCrumbs: false
   ShowCodeCopyButtons: true
   profileMode:
     enabled: true
