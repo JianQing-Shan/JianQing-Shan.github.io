@@ -1,0 +1,278 @@
+/* =========================================================================
+   Tale 质感定制层  ——  套在 PaperMod 之上（按 Tale 官方 SCSS 1:1 还原）
+   Tale 真实方案：标题=无衬线#353535，正文=衬线 Libre Baskerville #555，
+   日期/页脚=Palatino 斜体 #aaa，链接 #4a9ae1，边框 #e5e5e5；
+   每个标题下方有一条「短粗线」(.post-line: 宽4rem / 粗0.4rem / #353535)。
+   原则：只覆盖，不改主题子模块；保留头像主页、搜索、深色模式、目录、原导航布局。
+   ========================================================================= */
+
+/* ---------- 1. 调色板与节奏（对齐 Tale 变量） ---------- */
+:root {
+    --main-width: 760px;       /* Tale 容器约 800px */
+    --gap: 24px;
+    --content-gap: 22px;
+    --radius: 4px;
+
+    --theme: rgb(255, 255, 255);   /* $white  纯白 */
+    --entry: rgb(255, 255, 255);
+    --primary: rgb(53, 53, 53);    /* $default-shade #353535  标题 */
+    --content: rgb(85, 85, 85);    /* $default-color #555     正文 */
+    --secondary: rgb(170, 170, 170);/* $default-tint  #aaa     日期/次要 */
+    --grey1: rgb(151, 151, 151);   /* $grey-1 #979797  引用 */
+    --tertiary: rgb(229, 229, 229);
+    --border: rgb(229, 229, 229);  /* $grey-2 #e5e5e5  分割线/边框 */
+
+    --accent: rgb(74, 154, 225);   /* $blue #4a9ae1 */
+    --accent-strong: rgb(43, 121, 199);
+
+    /* 字体栈（Tale 同款） */
+    --serif: 'Libre Baskerville', 'Noto Serif SC', Georgia, 'Songti SC', serif;
+    --sans: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Helvetica, Arial, sans-serif;
+    --serif-meta: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Songti SC', serif;
+}
+
+:root[data-theme="dark"] {
+    --theme: rgb(27, 28, 30);
+    --entry: rgb(27, 28, 30);
+    --primary: rgb(225, 225, 223);
+    --content: rgb(186, 186, 184);
+    --secondary: rgb(128, 128, 126);
+    --grey1: rgb(150, 150, 148);
+    --tertiary: rgb(60, 61, 64);
+    --border: rgb(52, 53, 56);
+    --accent: rgb(110, 178, 235);
+    --accent-strong: rgb(150, 200, 240);
+}
+
+/* 列表页/首页的 body 会带 .list 类，主题默认给了灰底(#f5f5f5)，改回纯白 */
+.list {
+    background: var(--theme);
+}
+
+[data-theme="dark"] .list {
+    background: var(--theme);
+}
+
+/* ---------- 2. 基础排版：正文衬线 / 标题无衬线 ---------- */
+body {
+    font-family: var(--serif);
+    color: var(--content);
+    font-size: 18px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--sans);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ---------- 3. 顶部导航：保持 PaperMod 原布局，仅做 Tale 描边 ---------- */
+.logo a {
+    font-family: var(--sans);
+    color: var(--content);
+    font-weight: 700;
+}
+
+.menu a {
+    font-family: var(--sans);
+    color: var(--content);
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.menu a:hover,
+.menu .active {
+    opacity: 1;
+}
+
+.menu .active {
+    text-decoration: none;
+}
+
+/* ---------- 4. 隐藏列表/栏目页顶部的大标题（“文章”“归档”等） ---------- */
+.page-header {
+    display: none;
+}
+
+/* ---------- 5. 文章列表：去卡片化 + 标题短粗线 + 文章间分割线 ---------- */
+.post-entry {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 0 calc(var(--gap) * 1.3) 0;
+    margin-bottom: calc(var(--gap) * 1.3);
+    border-bottom: 1px solid var(--border);   /* 文章之间淡淡的分割线 (#e5e5e5) */
+    transition: none;
+}
+
+.post-entry:last-child {
+    border-bottom: none;
+}
+
+.post-entry:hover,
+.post-entry:focus-within {
+    transform: none;
+    border-color: var(--border);
+}
+
+/* 日期放到标题上方（Tale 顺序），正体不倾斜 */
+.entry-footer {
+    order: -1;
+    font-family: var(--serif-meta);
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    margin: 0 0 6px 0;
+}
+
+.entry-header h2 {
+    font-family: var(--sans);
+    color: var(--primary);
+    font-size: 30px;
+    line-height: 1.3;
+    display: block;
+    transition: opacity 0.2s ease;
+}
+
+/* Tale 招牌：标题下方一条细短线，悬停时灵动地伸长 */
+.entry-header h2::after {
+    content: "";
+    display: block;
+    width: 2.2rem;
+    border-top: 2px solid var(--primary);
+    margin-top: 0.7rem;
+    transition: width 0.3s ease;
+}
+
+.post-entry:hover .entry-header h2::after {
+    width: 4.2rem;
+}
+
+.entry-content {
+    font-family: var(--serif);
+    color: var(--content);
+    font-size: 16px;
+    line-height: 1.75;
+    margin: 14px 0 0 0;
+}
+
+/* ---------- 6. 单篇文章页：Tale 式（日期在上 + 居中标题 + 居中短线） ---------- */
+.post-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+/* 日期/作者置于标题上方，正体衬线（与 Tale 一致，不倾斜） */
+.post-meta {
+    order: -1;
+    font-family: var(--serif-meta);
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    margin: 0 0 1rem 0;
+}
+
+.post-title {
+    display: block;
+    font-family: var(--sans);
+    color: var(--primary);
+    font-size: 40px;
+    line-height: 1.25;
+}
+
+/* 短粗线放在 .post-header 末尾，保证始终在标题正下方居中 */
+.post-header::after {
+    content: "";
+    display: block;
+    width: 2.2rem;
+    border-top: 2px solid var(--primary);
+    margin-top: 1.1rem;
+}
+
+/* ---------- 7. 正文：衬线、舒展、链接 Tale 式悬停下划线 ---------- */
+.post-content {
+    font-family: var(--serif);
+    color: var(--content);
+    line-height: 1.85;
+}
+
+.post-content p {
+    margin: 0 0 1.1rem;
+}
+
+.post-content h1, .post-content h2, .post-content h3,
+.post-content h4, .post-content h5, .post-content h6 {
+    font-family: var(--sans);
+    color: var(--primary);
+}
+
+.post-content a,
+.entry-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.post-content a:hover,
+.entry-content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+}
+
+.post-content blockquote {
+    border-inline-start: 0.25rem solid var(--border);
+    color: var(--grey1);
+    font-style: normal;
+}
+
+/* ---------- 8. 头像主页（profileMode） ---------- */
+.profile .profile_inner h1 {
+    font-family: var(--sans);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.profile .profile_inner span,
+.profile .profile_inner b,
+.profile .profile_inner p {
+    font-family: var(--serif-meta);
+    font-style: italic;
+    color: var(--secondary);
+    font-weight: 400;
+}
+
+.profile img {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 9. 分页 / 页脚 / 杂项 ---------- */
+.pagination a {
+    background: transparent;
+    color: var(--content);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.pagination a:hover {
+    color: var(--accent-strong);
+    border-color: var(--accent);
+}
+
+.footer {
+    font-family: var(--serif-meta);
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+::selection {
+    background: rgba(74, 154, 225, 0.22);
+}
