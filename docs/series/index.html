@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>404 Page not found | 山渐清</title>
+<title>Series | 山渐清</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://JianQing-Shan.github.io/404.html">
+<link rel="canonical" href="https://JianQing-Shan.github.io/series/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.6d3d0b7d1b3e866096d87e5c4e2694ce34f2d13c190d6aad589c0aef8b067de6.css" integrity="sha256-bT0LfRs&#43;hmCW2H5cTiaUzjTy0TwZDWqtWJwK74sGfeY=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
@@ -18,7 +18,8 @@
 <link rel="mask-icon" href="https://JianQing-Shan.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://JianQing-Shan.github.io/404.html">
+<link rel="alternate" type="application/rss+xml" href="https://JianQing-Shan.github.io/series/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="https://JianQing-Shan.github.io/series/">
 <noscript>
     <style>
         #theme-toggle,
@@ -67,14 +68,14 @@
 </script><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
-<meta property="og:url" content="https://JianQing-Shan.github.io/404.html">
+<meta property="og:url" content="https://JianQing-Shan.github.io/series/">
   <meta property="og:site_name" content="山渐清">
-  <meta property="og:title" content="404 Page not found">
+  <meta property="og:title" content="Series">
   <meta property="og:locale" content="zh_cn">
   <meta property="og:type" content="website">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="404 Page not found">
+  <meta name="twitter:title" content="Series">
 
 </head>
 <body class="list" id="top">
@@ -113,7 +114,7 @@
             </li>
             <li>
                 <a href="https://JianQing-Shan.github.io/series/" title="系列">
-                    <span>系列</span>
+                    <span class="active">系列</span>
                 </a>
             </li>
             <li>
@@ -134,8 +135,49 @@
         </ul>
     </nav>
 </header>
-<main class="main">
-<div class="not-found">404</div>
+<main class="main"><div class="series-master" id="series-master">
+  <div class="series-names">
+      <button type="button" class="series-name-item" data-key="s0">现代世界史</button>
+  </div>
+  <div class="series-detail" aria-live="polite">
+      <div class="series-card" data-key="s0" hidden>
+        <ol class="series-card-list">
+          <li><a href="https://JianQing-Shan.github.io/posts/the-birth-of-the-modern-world-system/">1870-1914：现代世界体系的诞生——工业革命、阶级与民族</a></li>
+          <li><a href="https://JianQing-Shan.github.io/posts/the-collapse-of-the-old-world/">1914-1945：旧世界的崩塌——大萧条与世界大战</a></li>
+          <li><a href="https://JianQing-Shan.github.io/posts/the-solidification-of-the-cold-war-landscape/">1945-1950：铁幕落下——冷战格局的凝固</a></li>
+          <li><a href="https://JianQing-Shan.github.io/posts/cold-war-golden-age/">1950-1968：冷战黄金时代——繁荣与裂变</a></li>
+        </ol>
+      </div>
+  </div>
+</div>
+<script>
+(function () {
+  var master = document.getElementById('series-master');
+  if (!master) return;
+  var names = [].slice.call(master.querySelectorAll('.series-name-item'));
+  var cards = [].slice.call(master.querySelectorAll('.series-card'));
+  var active = null;
+  function show(key) {
+    active = key;
+    cards.forEach(function (c) { c.hidden = c.getAttribute('data-key') !== key; });
+    names.forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-key') === key); });
+    master.classList.add('is-open');
+  }
+  function hide() {
+    active = null;
+    master.classList.remove('is-open');
+    names.forEach(function (n) { n.classList.remove('active'); });
+  }
+  names.forEach(function (n) {
+    n.addEventListener('click', function () {
+      var key = n.getAttribute('data-key');
+      if (active === key) hide(); else show(key);
+    });
+  });
+  
+  if (names[0]) show(names[0].getAttribute('data-key'));
+})();
+</script>
     </main>
     
 <a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">

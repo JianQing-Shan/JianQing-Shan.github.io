@@ -1,5 +1,63 @@
 {{- define "main" }}
 
+{{- if eq .Type "series" }}
+{{- /* 系列：单页主从——左侧系列名(默认居中)，点击在右侧展开该系列的连载卡片
+       (仿归档：竖线+节点，序号代替日期；文章按 series-order 排)。再点收起。 */ -}}
+<div class="series-master" id="series-master">
+  <div class="series-names">
+    {{- range $i, $e := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- with site.GetPage (printf "/series/%s" $name) }}
+      <button type="button" class="series-name-item" data-key="s{{ $i }}">{{ .LinkTitle }}</button>
+      {{- end }}
+    {{- end }}
+  </div>
+  <div class="series-detail" aria-live="polite">
+    {{- range $i, $e := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- with site.GetPage (printf "/series/%s" $name) }}
+      <div class="series-card" data-key="s{{ $i }}" hidden>
+        <ol class="series-card-list">
+          {{- range (.Pages.ByParam "series-order") }}
+          <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+          {{- end }}
+        </ol>
+      </div>
+      {{- end }}
+    {{- end }}
+  </div>
+</div>
+<script>
+(function () {
+  var master = document.getElementById('series-master');
+  if (!master) return;
+  var names = [].slice.call(master.querySelectorAll('.series-name-item'));
+  var cards = [].slice.call(master.querySelectorAll('.series-card'));
+  var active = null;
+  function show(key) {
+    active = key;
+    cards.forEach(function (c) { c.hidden = c.getAttribute('data-key') !== key; });
+    names.forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-key') === key); });
+    master.classList.add('is-open');
+  }
+  function hide() {
+    active = null;
+    master.classList.remove('is-open');
+    names.forEach(function (n) { n.classList.remove('active'); });
+  }
+  names.forEach(function (n) {
+    n.addEventListener('click', function () {
+      var key = n.getAttribute('data-key');
+      if (active === key) hide(); else show(key);
+    });
+  });
+  // 默认展开排在最前(首字母序)的系列；同步执行，首屏直接是展开态、无加载动画
+  if (names[0]) show(names[0].getAttribute('data-key'));
+})();
+</script>
+
+{{- else }}
+{{- /* 标签等其它分类：极简药丸云 */ -}}
 <div class="tags-index">
   <ul class="terms-tags">
     {{- $type := .Type }}
@@ -12,5 +70,7 @@
     {{- end }}
   </ul>
 </div>
+
+{{- end }}
 
 {{- end }}{{/* end main */ -}}

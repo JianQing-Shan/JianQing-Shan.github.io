@@ -1,0 +1,16 @@
+{{- define "main" }}
+
+{{- /* 单个系列页：连载目录——该系列文章按阅读正序(日期升序)编号列出。
+       如需脱离日期、显式控制顺序：给文章 front matter 加一个专用字段(如 order: 1)，
+       把下面的 .Pages.ByDate 改成 (.Pages.ByParam "order")。
+       不要用 Hugo 的 `weight`，那会顺带改变 /posts/ 主列表的排序。 */ -}}
+<div class="series-detail">
+  <h1 class="series-name">{{ .Title }}</h1>
+  <ol class="series-list">
+    {{- range .Pages.ByDate }}
+    <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+    {{- end }}
+  </ol>
+</div>
+
+{{- end }}{{/* end main */ -}}

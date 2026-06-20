@@ -1,12 +1,19 @@
+# 山渐清的博客
 baseURL: "https://JianQing-Shan.github.io/"
 title: "山渐清"
 theme: "PaperMod"
 publishDir: "docs"
+cleanDestinationDir: true   # 每次构建清掉 docs/ 旧产物，避免删稿后残留
 locale: "zh-cn"
 buildFuture: true
 
 taxonomies:
   tag: tags
+  series: series
+
+# 文章网址只取 slug，子文件夹仅用于组织（不进 URL）
+permalinks:
+  posts: /posts/:slug/
 
 # 首页额外输出 JSON：作为 PaperMod 搜索(Fuse.js)的索引
 outputs:
@@ -48,9 +55,9 @@ menu:
       name: "文章"
       url: "/posts/"
       weight: 1
-    - identifier: "search"
-      name: "搜索"
-      url: "/search/"
+    - identifier: "series"
+      name: "系列"
+      url: "/series/"
       weight: 2
     - identifier: "archives"
       name: "归档"
@@ -60,7 +67,7 @@ menu:
       name: "标签"
       url: "/tags/"
       weight: 4
-    - identifier: "about"
-      name: "关于"
-      url: "/about/"
+    - identifier: "search"
+      name: "搜索"
+      url: "/search/"
       weight: 5

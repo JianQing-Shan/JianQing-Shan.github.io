@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Series on 山渐清</title>
+    <link>https://JianQing-Shan.github.io/series/</link>
+    <description>Recent content in Series on 山渐清</description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 16 Jun 2026 12:00:00 +0800</lastBuildDate>
+    <atom:link href="https://JianQing-Shan.github.io/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>现代世界史</title>
+      <link>https://JianQing-Shan.github.io/series/%E7%8E%B0%E4%BB%A3%E4%B8%96%E7%95%8C%E5%8F%B2/</link>
+      <pubDate>Tue, 16 Jun 2026 12:00:00 +0800</pubDate>
+      <guid>https://JianQing-Shan.github.io/series/%E7%8E%B0%E4%BB%A3%E4%B8%96%E7%95%8C%E5%8F%B2/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

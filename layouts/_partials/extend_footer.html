@@ -1,42 +1,143 @@
-{{- /* 页面(.Kind page)注入：顶部阅读进度线（所有此类页面，含归档）
-       + Notion 风格浮动目录（仅有 .post-content 且标题>=2 的文章页）。
-       共用一个滚动监听。 */ -}}
+{{- /* 来路记录：所有页面都挂——在任何列表点文章链接时，把"该列表的有序清单"
+       存进 sessionStorage，供文章页判断上一篇/下一篇（尊重来路顺序）。 */ -}}
+<script>
+(function () {
+  function fromList(sel) {
+    return [].map.call(document.querySelectorAll(sel), function (a) {
+      return { u: a.pathname, t: (a.getAttribute('aria-label') || a.textContent || '').trim() };
+    });
+  }
+  function ctxOf(link) {
+    var card = link.closest && link.closest('.series-card-list');
+    if (card) {
+      return [].map.call(card.querySelectorAll('li > a'), function (a) {
+        return { u: a.pathname, t: (a.textContent || '').trim() };
+      });
+    }
+    if (link.closest('.searchResults')) return fromList('.searchResults li .entry-link');
+    if (link.closest('.archive-entry')) return fromList('.archive-entry .entry-link');
+    if (link.closest('.post-entry, .first-entry')) return fromList('.first-entry .entry-link, .post-entry .entry-link');
+    return null;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    if (a.id === 'post-back' || a.closest('.post-nav-arrow') || a.closest('.paginav')) return;
+    var list = ctxOf(a);
+    if (list && list.length > 1) {
+      try { sessionStorage.setItem('nav-ctx', JSON.stringify(list)); } catch (err) {}
+    }
+  }, true);
+})();
+</script>
+
 {{- if or (eq .Kind "page") (eq .Kind "term") }}
 <script>
 (function () {
-  /* —— 顶部阅读进度线（随滚动推进） —— */
+  /* —— 顶部阅读进度线 —— */
   var bar = document.createElement('div');
   bar.id = 'reading-progress';
   document.body.appendChild(bar);
 
-  /* —— 返回箭头：插在页头 logo 左侧。仅“深层页”出现：单篇文章、单个标签页；
-        排除文章列表(/posts/)与标签索引(/tags/)等顶层入口。
-        点击优先返回上一页，无站内历史则回对应列表。 —— */
+  var content = document.querySelector('.post-content');
+  var single = document.querySelector('.post-single');
+
+  /* —— 返回箭头：任何单篇文章页（含空正文）+ 标签/系列单页 —— */
   var _p = location.pathname;
-  var _isArticle = _p.indexOf('/posts/') === 0 && _p !== '/posts/';
   var _isTagTerm = _p.indexOf('/tags/') === 0 && _p !== '/tags/';
-  if (_isArticle || _isTagTerm) {
+  var _isSeriesTerm = _p.indexOf('/series/') === 0 && _p !== '/series/';
+  /* 文章 = posts 段下的单篇；.post-single 空正文也在，天然排除 /about /search /tags /series 及 /posts/ 列表页 */
+  var _isArticle = _p.indexOf('/posts/') === 0 && !!single;
+  if (_isArticle || _isTagTerm || _isSeriesTerm) {
     var logo = document.querySelector('.header-nav .logo');
     if (logo) {
+      var fallback = _isTagTerm ? '/tags/' : _isSeriesTerm ? '/series/' : '/posts/';
+      var goBack = function (e) {
+        e.preventDefault();
+        var fromSameSite = document.referrer && new URL(document.referrer).origin === location.origin;
+        if (fromSameSite && window.history.length > 1) window.history.back();
+        else location.href = fallback;
+      };
+      var logoLink = logo.querySelector('a');               // 原「山渐清」链接（插入箭头前先取）
       var back = document.createElement('a');
       back.id = 'post-back';
-      back.href = _isTagTerm ? '/tags/' : '/posts/';
+      back.href = fallback;
       back.setAttribute('aria-label', '返回');
       back.setAttribute('title', '返回');
-      back.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
-      back.addEventListener('click', function (e) {
-        var fromSameSite = document.referrer && new URL(document.referrer).origin === location.origin;
-        if (fromSameSite && window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-      });
+      back.innerHTML = '❮';
+      back.addEventListener('click', goBack);
       logo.insertBefore(back, logo.firstChild);
+      if (logoLink) logoLink.addEventListener('click', goBack);   // 有返回键时点 logo 也=返回，避免误触后果
     }
   }
 
-  /* —— Notion 风格浮动目录（仅文章正文页） —— */
-  var content = document.querySelector('.post-content');
+  /* —— 上一篇/下一篇：来路优先(sessionStorage)，无来路则回退到底部 paginav(Hugo 渲染的全局日期序) —— */
+  if (_isArticle) {
+    var here = location.pathname;
+    var prev = null, next = null, matched = false;
+    try {
+      var ctx = JSON.parse(sessionStorage.getItem('nav-ctx') || 'null');
+      if (ctx && ctx.length) {
+        ctx.forEach(function (o) { if (o && o.t) o.t = o.t.replace(/^post link to\s*/i, ''); });  /* entry-link 的 aria-label 形如 "post link to 标题"，在此统一剥掉前缀（含旧缓存） */
+        var idx = -1;
+        for (var i = 0; i < ctx.length; i++) { if (ctx[i].u === here) { idx = i; break; } }
+        if (idx !== -1) {
+          matched = true;
+          prev = idx > 0 ? ctx[idx - 1] : null;
+          next = idx < ctx.length - 1 ? ctx[idx + 1] : null;
+        }
+      }
+    } catch (err) {}
+
+    var paginav = document.querySelector('.paginav');
+    if (!matched && paginav) {
+      var pp = paginav.querySelector('.prev'), nn = paginav.querySelector('.next');
+      prev = pp ? { u: pp.getAttribute('href'), t: '' } : null;
+      next = nn ? { u: nn.getAttribute('href'), t: '' } : null;
+    }
+
+    /* 顶部：日期处加 ❮ ❯ */
+    var meta = document.querySelector('.post-meta');
+    if (meta) {
+      if (prev) {
+        var ap = document.createElement('a');
+        ap.className = 'post-nav-arrow prev';
+        ap.href = prev.u; ap.title = prev.t || '上一篇';
+        ap.setAttribute('aria-label', '上一篇'); ap.innerHTML = '<span class="pn-g">❮</span><span>PREV</span>';
+        meta.insertBefore(ap, meta.firstChild);
+      }
+      if (next) {
+        var an = document.createElement('a');
+        an.className = 'post-nav-arrow next';
+        an.href = next.u; an.title = next.t || '下一篇';
+        an.setAttribute('aria-label', '下一篇'); an.innerHTML = '<span>NEXT</span><span class="pn-g">❯</span>';
+        meta.appendChild(an);
+      }
+    }
+
+    /* 底部 paginav：统一逻辑——命中来路时用来路的上/下篇覆盖；标签统一 PREV/NEXT */
+    if (paginav) {
+      var setSide = function (cls, item, label) {
+        var el = paginav.querySelector('.' + cls);
+        if (matched) {
+          if (!item) { if (el) el.remove(); return; }
+          if (!el) {
+            el = document.createElement('a');
+            el.className = cls;
+            el.innerHTML = '<span class="title"></span><span></span>';
+            (cls === 'prev') ? paginav.insertBefore(el, paginav.firstChild) : paginav.appendChild(el);
+          }
+          el.setAttribute('href', item.u);
+          el.querySelector('span:not(.title)').textContent = item.t;
+        }
+        if (el) { var ti = el.querySelector('.title'); if (ti) ti.textContent = label; }
+      };
+      setSide('prev', prev, 'PREV');
+      setSide('next', next, 'NEXT');
+    }
+  }
+
+  /* —— Notion 风格浮动目录（仅有正文且标题>=2） —— */
   var rows = [];
   if (content) {
     var heads = [].slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id]'));

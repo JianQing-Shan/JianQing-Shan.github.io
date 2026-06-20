@@ -2,8 +2,8 @@
    山渐清 · 外观定制层（PaperMod extended CSS，只覆盖、不改主题子模块）
    设计基调：Tale 式极简 + 安静的中文阅读体验
 
-   字体：标题=无衬线(系统黑体/Helvetica)；正文=宋体(系统) + 英文 Times New Roman；
-         日期/页脚=Palatino 正体
+   字体：标题/正文/日期=衬线（英文 Times New Roman + 中文宋体）；
+         导航·菜单·PREV/NEXT·标签=无衬线黑体；页脚/主页标语=Palatino
    配色：标题 #353535 / 正文 #555 / 次要 #aaa / 边框 #e5e5e5 / 链接 #4a9ae1
    交互：“灵动”仅用于导航与索引（标题/列表/标签/搜索的悬停短黑线、阅读进度线、
          浮动目录、返回箭头）；正文保持绝对安静，不加任何悬停效果
@@ -59,7 +59,7 @@
     background: var(--theme);
 }
 
-/* ---------- 2. 基础排版：正文衬线 / 标题无衬线 ---------- */
+/* ---------- 2. 基础排版：正文与标题均衬线（英文 TNR + 中文宋体） ---------- */
 body {
     font-family: var(--serif);
     color: var(--content);
@@ -69,7 +69,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--sans);
+    font-family: var(--serif);
     color: var(--primary);
     font-weight: 700;
 }
@@ -85,7 +85,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--sans);
     color: var(--content);
     opacity: 0.6;
-    transition: opacity 0.2s ease;
+    transition: opacity .2s ease;
 }
 
 .menu a:hover,
@@ -107,6 +107,8 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
+    font-size: 21px;
+    line-height: 1;
     color: var(--secondary);
     transition: color .2s ease, transform .2s ease;
 }
@@ -147,21 +149,22 @@ h1, h2, h3, h4, h5, h6 {
 /* 日期放到标题上方（Tale 顺序），正体不倾斜 */
 .entry-footer {
     order: -1;
-    font-family: var(--serif-meta);
+    font-family: var(--serif);
     font-style: normal;
     color: var(--secondary);
     font-size: 16px;
     letter-spacing: 0.5px;
+    text-transform: uppercase;   /* 与文章页日期一致：全大写 */
     margin: 0 0 6px 0;
 }
 
 .entry-header h2 {
-    font-family: var(--sans);
+    font-family: var(--serif);
     color: var(--primary);
     font-size: 30px;
     line-height: 1.3;
     display: block;
-    transition: opacity 0.2s ease;
+    transition: opacity .2s ease;
 }
 
 /* Tale 招牌：标题下方一条细短线，悬停时灵动地伸长 */
@@ -171,7 +174,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 2.2rem;
     border-top: 2px solid var(--primary);
     margin-top: 0.7rem;
-    transition: width 0.3s ease;
+    transition: width .3s ease;
 }
 
 .post-entry:hover .entry-header h2::after {
@@ -195,19 +198,99 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 2.5rem;
 }
 
-/* 日期置于标题下方（取代原来的短线位置），正体衬线不倾斜 */
+/* 日期置于标题下方；两侧放上/下篇导航（❮ PREV / NEXT ❯），与底部统一 */
 .post-meta {
-    font-family: var(--serif-meta);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 1.1rem;
+    font-family: var(--serif);
     font-style: normal;
     color: var(--secondary);
     font-size: 16px;
     letter-spacing: 0.5px;
+    text-transform: uppercase;   /* 日期与 PREV/NEXT 全大写，整行一致；去掉本行=日期还原 June */
     margin: 1rem 0 0 0;
 }
 
+/* 顶部：日期两侧的上/下篇（无衬线标签 + ❮ ❯）；.post-meta a 加权重盖掉默认点状下划线 */
+.post-meta .post-nav-arrow {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.22em;                 /* ❮ 与 PREV 间距收紧 */
+    font-family: var(--serif);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+/* 雪佛龙字形 ❮ ❯ */
+.post-nav-arrow .pn-g {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.post-nav-arrow:hover { color: var(--primary); }
+.post-nav-arrow.prev:hover { transform: translateX(-3px); }
+.post-nav-arrow.next:hover { transform: translateX(3px); }
+
+/* 底部 上一篇/下一篇：去掉默认盒子，极简文本 + 顶部细分隔线 */
+.paginav {
+    margin-top: 2.5rem;
+    padding-top: 1.4rem;
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+}
+
+.paginav a {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0.2rem 0;
+    transition: transform .2s ease;
+}
+
+.paginav a:hover { background: transparent; }
+.paginav .prev:hover { transform: translateX(-3px); }
+.paginav .next:hover { transform: translateX(3px); }
+
+.paginav .title {
+    font-family: var(--serif);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: none;
+    color: var(--secondary);
+    transition: color .2s ease;
+}
+
+/* 与顶部统一：❮ PREV / NEXT ❯ */
+.paginav .prev .title::before { content: "❮ "; }
+.paginav .next { text-align: right; }
+.paginav .next .title::after { content: " ❯"; }
+
+.paginav span:not(.title) {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--primary);
+    transition: color .2s ease;
+}
+
+/* 悬停单色（不用强调色），与全站一致 */
+.paginav a:hover .title { color: var(--primary); }
+.paginav a:hover span:not(.title) { color: var(--primary); }
+
+/* 文末标签：太突兀，隐藏（保留 PaperMod 结构，仅不显示） */
+.post-tags { display: none; }
+
 .post-title {
     display: block;
-    font-family: var(--sans);
+    font-family: var(--serif);
     color: var(--primary);
     font-size: 40px;
     line-height: 1.25;
@@ -226,7 +309,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .post-content h1, .post-content h2, .post-content h3,
 .post-content h4, .post-content h5, .post-content h6 {
-    font-family: var(--sans);
+    font-family: var(--serif);
     color: var(--primary);
     line-height: 1.35;          /* 多行标题更舒展（原 1.2 偏挤） */
 }
@@ -258,7 +341,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---------- 8. 头像主页（profileMode） ---------- */
 .profile .profile_inner h1 {
-    font-family: var(--sans);
+    font-family: var(--serif);
     color: var(--primary);
     font-weight: 700;
 }
@@ -282,7 +365,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--content);
     border: 1px solid var(--border);
     border-radius: 999px;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition: color .2s ease, border-color .2s ease;
 }
 
 .pagination a:hover {
@@ -297,11 +380,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::selection {
-    background: rgba(74, 154, 225, 0.22);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* ========================================================================
-   顶部阅读进度条（随滚动推进的红线）
+   顶部阅读进度条（随滚动推进的深色线）
    ======================================================================== */
 #reading-progress {
     position: fixed;
@@ -491,7 +574,7 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 0;
     background: transparent;
     padding: 11px 2px;
-    font-family: var(--sans);
+    font-family: var(--serif);
     font-size: 17px;
     font-weight: 400;
     color: var(--primary);
@@ -523,6 +606,215 @@ h1, h2, h3, h4, h5, h6 {
 .searchResults li:hover::after,
 .searchResults li.focus::after {
     width: 2.4rem;
+}
+
+/* ========================================================================
+   系列：单页主从交互（与标签的"云"区分）
+   左侧系列名(默认居中)，点击在右侧平滑展开"连载卡片"(仿归档：竖线+节点，序号代日期)。
+   打开/收起时一次平滑位移；切换系列不位移；其它系列轻微淡化但仍清晰可点。
+   ======================================================================== */
+.series-master {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 2.6rem;
+}
+
+/* —— 左：系列名 —— */
+.series-names {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.series-name-item {
+    position: relative;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    padding: 8px 6px 12px;
+    transition: opacity .25s ease;
+}
+
+/* 悬停灵动小线（与列表/归档/搜索一致），居中由短到长 */
+.series-name-item::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transform: translateX(-50%);
+    transition: width .3s ease;
+}
+.series-name-item:hover::after { width: 1.6rem; }
+
+/* 展开后：其它系列淡化(仍可点)，当前系列高亮加粗——聚焦卡片又不丢远 */
+.series-master.is-open .series-name-item {
+    opacity: .4;
+}
+
+/* 淡化态悬浮 → 明显提亮，给出反馈 */
+.series-master.is-open .series-name-item:hover {
+    opacity: .85;
+}
+
+.series-master.is-open .series-name-item.active {
+    opacity: 1;
+    font-weight: 700;
+}
+
+/* —— 右：连载卡片（宽度从 0 平滑展开，名字随之自然左移；切换时不动） —— */
+.series-detail {
+    width: 0;
+    overflow-x: hidden;
+    margin-left: 0;
+    transition: width .35s cubic-bezier(.22, 1, .36, 1),
+                margin-left .35s cubic-bezier(.22, 1, .36, 1);
+}
+
+.series-master.is-open .series-detail {
+    width: 440px;
+    margin-left: 44px;
+}
+
+.series-card {
+    width: 440px;
+    max-height: 68vh;
+    overflow-y: auto;
+    padding: 4px 6px 4px 2px;
+}
+
+/* 切换系列时：卡片由隐藏(display:none)转可见，动画重放 → 轻微淡入上移，给眼睛反馈 */
+@keyframes scardIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+.series-card:not([hidden]) {
+    animation: scardIn .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* 卡片内：连载目录，仿归档(竖线 + 节点 + 标题)，左侧序号代替日期 */
+.series-card-list {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: scard;
+}
+
+.series-card-list li {
+    position: relative;
+    counter-increment: scard;
+    padding: 11px 0 11px 56px;
+}
+
+/* 竖线：逐项画段，最后一项不画 → 线正好停在最后一个点(不超出) */
+.series-card-list li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 20px;
+    height: 100%;
+    width: 2px;
+    background: var(--border);
+}
+
+/* 时间轴节点 */
+.series-card-list li::after {
+    content: "";
+    position: absolute;
+    left: 27px;
+    top: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: 0 0 0 3px var(--theme);
+    transition: background .2s ease, transform .2s ease;
+}
+
+.series-card-list li:hover::after {
+    background: var(--primary);
+    transform: scale(1.3);
+}
+
+.series-card-list li a {
+    position: relative;
+    display: inline-block;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--primary);
+    text-decoration: none;
+    transition: font-weight .2s ease;
+}
+
+/* 序号(代替归档里的日期)，放标题左侧 */
+.series-card-list li a::before {
+    content: counter(scard, decimal-leading-zero);
+    position: absolute;
+    left: -56px;
+    top: 1px;
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--secondary);
+}
+
+.series-card-list li:hover a {
+    font-weight: 700;
+}
+
+/* 悬停灵动小线（与列表/归档/搜索一致） */
+.series-card-list li a::after {
+    content: "";
+    display: block;
+    width: 0;
+    border-top: 2px solid var(--primary);
+    margin-top: 0.3rem;
+    transition: width .3s ease;
+}
+
+.series-card-list li:hover a::after {
+    width: 2.2rem;
+}
+
+/* 窄屏：左右主从 → 竖排；系列名与卡片统一左对齐，连成一条左缘（仅窄屏，桌面不受影响） */
+@media (max-width: 900px) {
+    .series-master {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .series-names {
+        align-items: flex-start;
+        width: 100%;
+    }
+    .series-name-item {
+        text-align: left;
+        padding-left: 0;
+    }
+    .series-name-item::after {       /* 悬停灵动线：窄屏改为左缘起笔 */
+        left: 0;
+        transform: none;
+    }
+    .series-master.is-open .series-detail {
+        width: 100%;
+        max-width: 440px;
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+    .series-card {
+        width: 100%;
+    }
 }
 
 /* ========================================================================
@@ -607,7 +899,7 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0 0 0.2rem;
     padding-bottom: 0.45rem;
     text-align: left;
-    font-family: var(--sans);
+    font-family: var(--serif);
     font-size: 27px;
     font-weight: 700;
     color: var(--primary);
@@ -639,9 +931,9 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     width: 68px;
     margin: 1.1rem 0 0.2rem;
-    padding: 0;
+    padding: 0 16px 0 0;
     text-align: right;
-    font-family: var(--sans);
+    font-family: var(--serif);
     font-size: 25px;
     font-weight: 700;
     color: var(--primary);
@@ -695,10 +987,21 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.3);
 }
 
+/* 竖线收到最后一个点：用页面色挡掉"该年最后一篇"圆点以下的线段 */
+.archive-month:last-child .archive-entry:last-child::after {
+    content: "";
+    position: absolute;
+    left: 73px;
+    top: 26px;
+    width: 8px;
+    height: 999px;
+    background: var(--theme);
+}
+
 /* 标题：仅悬停时短黑线从无到有伸出（不常驻） */
 .archive-entry-title {
     display: inline-block;
-    font-family: var(--sans);
+    font-family: var(--serif);
     font-size: 17px;
     font-weight: 400;
     line-height: 1.4;

@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/tags/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.af118b6a6561c081b3636a31e04a928af99084330ddb44e63cb8812f4c5c2dcd.css" integrity="sha256-rxGLamVhwIGzY2ox4EqSivmQhDMN20TmPLiBL0xcLc0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.6d3d0b7d1b3e866096d87e5c4e2694ce34f2d13c190d6aad589c0aef8b067de6.css" integrity="sha256-bT0LfRs&#43;hmCW2H5cTiaUzjTy0TwZDWqtWJwK74sGfeY=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -113,8 +113,8 @@
                 </a>
             </li>
             <li>
-                <a href="https://JianQing-Shan.github.io/search/" title="搜索 (Alt &#43; /)" accesskey=/>
-                    <span>搜索</span>
+                <a href="https://JianQing-Shan.github.io/series/" title="系列">
+                    <span>系列</span>
                 </a>
             </li>
             <li>
@@ -128,16 +128,14 @@
                 </a>
             </li>
             <li>
-                <a href="https://JianQing-Shan.github.io/about/" title="关于">
-                    <span>关于</span>
+                <a href="https://JianQing-Shan.github.io/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
                 </a>
             </li>
         </ul>
     </nav>
 </header>
-<main class="main">
-
-<div class="tags-index">
+<main class="main"><div class="tags-index">
   <ul class="terms-tags">
       <li><a href="https://JianQing-Shan.github.io/tags/%E4%B8%96%E7%95%8C%E5%A4%A7%E6%88%98/">世界大战<span class="tag-count">1</span></a></li>
       <li><a href="https://JianQing-Shan.github.io/tags/%E5%86%B7%E6%88%98/">冷战<span class="tag-count">2</span></a></li>
@@ -152,7 +150,36 @@
         <polyline points="17 11 12 6 7 11"></polyline>
         <polyline points="17 18 12 13 7 18"></polyline>
     </svg>
-</a>
+</a><script>
+(function () {
+  function fromList(sel) {
+    return [].map.call(document.querySelectorAll(sel), function (a) {
+      return { u: a.pathname, t: (a.getAttribute('aria-label') || a.textContent || '').trim() };
+    });
+  }
+  function ctxOf(link) {
+    var card = link.closest && link.closest('.series-card-list');
+    if (card) {
+      return [].map.call(card.querySelectorAll('li > a'), function (a) {
+        return { u: a.pathname, t: (a.textContent || '').trim() };
+      });
+    }
+    if (link.closest('.searchResults')) return fromList('.searchResults li .entry-link');
+    if (link.closest('.archive-entry')) return fromList('.archive-entry .entry-link');
+    if (link.closest('.post-entry, .first-entry')) return fromList('.first-entry .entry-link, .post-entry .entry-link');
+    return null;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    if (a.id === 'post-back' || a.closest('.post-nav-arrow') || a.closest('.paginav')) return;
+    var list = ctxOf(a);
+    if (list && list.length > 1) {
+      try { sessionStorage.setItem('nav-ctx', JSON.stringify(list)); } catch (err) {}
+    }
+  }, true);
+})();
+</script>
 
 
 <script>
