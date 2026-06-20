@@ -8,9 +8,25 @@ buildFuture: true
 taxonomies:
   tag: tags
 
+# 首页额外输出 JSON：作为 PaperMod 搜索(Fuse.js)的索引
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
 params:
   hideFooter: true
   mainSections: ["posts"]
+  # 搜索(Fuse.js)按中文调优
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    threshold: 0.3
+    minMatchCharLength: 1
+    ignoreLocation: true
+    keys: ["title", "summary", "content"]
+  disableAnchoredHeadings: true
   ShowToc: true
   ShowPostNavLinks: true
   ShowBreadCrumbs: false

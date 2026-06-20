@@ -1,9 +1,15 @@
 /* =========================================================================
-   Tale 质感定制层  ——  套在 PaperMod 之上（按 Tale 官方 SCSS 1:1 还原）
-   Tale 真实方案：标题=无衬线#353535，正文=衬线 Libre Baskerville #555，
-   日期/页脚=Palatino 斜体 #aaa，链接 #4a9ae1，边框 #e5e5e5；
-   每个标题下方有一条「短粗线」(.post-line: 宽4rem / 粗0.4rem / #353535)。
-   原则：只覆盖，不改主题子模块；保留头像主页、搜索、深色模式、目录、原导航布局。
+   山渐清 · 外观定制层（PaperMod extended CSS，只覆盖、不改主题子模块）
+   设计基调：Tale 式极简 + 安静的中文阅读体验
+
+   字体：标题=无衬线(系统黑体/Helvetica)；正文=宋体(系统) + 英文 Times New Roman；
+         日期/页脚=Palatino 正体
+   配色：标题 #353535 / 正文 #555 / 次要 #aaa / 边框 #e5e5e5 / 链接 #4a9ae1
+   交互：“灵动”仅用于导航与索引（标题/列表/标签/搜索的悬停短黑线、阅读进度线、
+         浮动目录、返回箭头）；正文保持绝对安静，不加任何悬停效果
+   深色：全部走 CSS 变量，[data-theme="dark"] 下自动适配
+
+   加载机制：经 assets/css/extended/ 在 PaperMod 样式之后追加，沿用其变量体系。
    ========================================================================= */
 
 /* ---------- 1. 调色板与节奏（对齐 Tale 变量） ---------- */
@@ -26,7 +32,7 @@
     --accent-strong: rgb(43, 121, 199);
 
     /* 字体栈（Tale 同款） */
-    --serif: 'Libre Baskerville', 'Noto Serif SC', Georgia, 'Songti SC', serif;
+    --serif: 'Times New Roman', Times, 'Songti SC', SimSun, STSong, 'Noto Serif SC', serif;
     --sans: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Helvetica, Arial, sans-serif;
     --serif-meta: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Songti SC', serif;
 }
@@ -85,10 +91,29 @@ h1, h2, h3, h4, h5, h6 {
 .menu a:hover,
 .menu .active {
     opacity: 1;
+    text-decoration: none;
 }
 
-.menu .active {
-    text-decoration: none;
+/* 返回箭头：页头 logo 左侧的极简图标（仅文章/单标签等深层页，由 extend_footer.html 注入）。
+   绝对定位在「山渐清」左侧的空白处，不挤占 logo，保证各页 logo 位置一致 */
+.logo {
+    position: relative;
+}
+
+#post-back {
+    position: absolute;
+    right: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary);
+    transition: color .2s ease, transform .2s ease;
+}
+
+#post-back:hover {
+    color: var(--primary);
+    transform: translateY(-50%) translateX(-3px);
 }
 
 /* ---------- 4. 隐藏列表/栏目页顶部的大标题（“文章”“归档”等） ---------- */
@@ -161,7 +186,7 @@ h1, h2, h3, h4, h5, h6 {
     margin: 14px 0 0 0;
 }
 
-/* ---------- 6. 单篇文章页：Tale 式（日期在上 + 居中标题 + 居中短线） ---------- */
+/* ---------- 6. 单篇文章页：日期在上 + 居中标题 ---------- */
 .post-header {
     display: flex;
     flex-direction: column;
@@ -170,15 +195,14 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 2.5rem;
 }
 
-/* 日期/作者置于标题上方，正体衬线（与 Tale 一致，不倾斜） */
+/* 日期置于标题下方（取代原来的短线位置），正体衬线不倾斜 */
 .post-meta {
-    order: -1;
     font-family: var(--serif-meta);
     font-style: normal;
     color: var(--secondary);
     font-size: 16px;
     letter-spacing: 0.5px;
-    margin: 0 0 1rem 0;
+    margin: 1rem 0 0 0;
 }
 
 .post-title {
@@ -187,15 +211,6 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
     font-size: 40px;
     line-height: 1.25;
-}
-
-/* 短粗线放在 .post-header 末尾，保证始终在标题正下方居中 */
-.post-header::after {
-    content: "";
-    display: block;
-    width: 2.2rem;
-    border-top: 2px solid var(--primary);
-    margin-top: 1.1rem;
 }
 
 /* ---------- 7. 正文：衬线、舒展、链接 Tale 式悬停下划线 ---------- */
@@ -213,7 +228,15 @@ h1, h2, h3, h4, h5, h6 {
 .post-content h4, .post-content h5, .post-content h6 {
     font-family: var(--sans);
     color: var(--primary);
+    line-height: 1.35;          /* 多行标题更舒展（原 1.2 偏挤） */
 }
+
+/* 正文各级标题尺寸（参考 Notion：标题 40 / H1 30 / H2 24 / H3 20）
+   上松下紧：与上一节拉开、与本节正文贴近 */
+.post-content h1 { font-size: 30px; margin: 2.2rem 0 0.7rem; }
+.post-content h2 { font-size: 24px; margin: 2rem 0 0.6rem; }
+.post-content h3 { font-size: 20px; margin: 1.7rem 0 0.5rem; }
+.post-content h4 { font-size: 18px; margin: 1.5rem 0 0.5rem; }
 
 .post-content a,
 .entry-content a {
@@ -259,7 +282,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--content);
     border: 1px solid var(--border);
     border-radius: 999px;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .pagination a:hover {
@@ -275,4 +298,429 @@ h1, h2, h3, h4, h5, h6 {
 
 ::selection {
     background: rgba(74, 154, 225, 0.22);
+}
+
+/* ========================================================================
+   顶部阅读进度条（随滚动推进的红线）
+   ======================================================================== */
+#reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 70;
+    background: var(--primary);   /* 深灰/黑，与标题、目录高亮呼应；深色模式自动转浅 */
+    border-radius: 0 2px 2px 0;
+    transition: width .12s ease-out;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #reading-progress { transition: none; }
+}
+
+/* ========================================================================
+   Notion 风格浮动目录（右侧）
+   平时：一列短横条，当前阅读位置那条变深加粗，随滚动前进
+   悬停：横条淡出、文字面板淡入+轻微滑入缩放，逐条错落浮现，当前项高亮
+   ======================================================================== */
+#floating-toc {
+    position: fixed;
+    top: 50%;
+    right: 1.5rem;
+    transform: translateY(-50%);
+    z-index: 60;
+}
+
+/* —— 收起态：横条轨道 —— */
+.ftoc-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 13px;
+    padding: 8px;
+    transition: opacity .25s ease;
+}
+
+.ftoc-dash {
+    height: 2px;
+    border-radius: 2px;
+    background: var(--tertiary);
+    transition: background .25s ease, width .25s ease, height .25s ease;
+}
+
+.ftoc-dash[data-level="1"] { width: 26px; }
+.ftoc-dash[data-level="2"] { width: 20px; }
+.ftoc-dash[data-level="3"] { width: 14px; }
+.ftoc-dash[data-level="4"] { width: 10px; }
+
+.ftoc-dash.active {
+    background: var(--primary);   /* 当前章节：深色加粗 */
+    height: 3px;
+}
+
+/* —— 展开态：文字面板（默认隐藏，悬停淡入滑进） —— */
+.ftoc-panel {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(12px) scale(.96);
+    transform-origin: right center;
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    max-height: 78vh;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--theme);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, .15);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s cubic-bezier(.22, 1, .36, 1),
+                transform .34s cubic-bezier(.22, 1, .36, 1);
+}
+
+.ftoc-item {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--secondary);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: normal;
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity .2s ease, transform .2s ease, background .15s ease, color .15s ease;
+}
+
+.ftoc-item[data-level="2"] { padding-left: 24px; }
+.ftoc-item[data-level="3"] { padding-left: 38px; }
+.ftoc-item[data-level="4"] { padding-left: 52px; }
+
+.ftoc-item:hover { color: var(--accent); }
+
+.ftoc-item.active {
+    background: rgba(128, 128, 128, .16);
+    color: var(--primary);
+}
+
+/* —— 悬停：轨道淡出，面板淡入滑进，条目逐条错落浮现 —— */
+#floating-toc:hover .ftoc-rail {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#floating-toc:hover .ftoc-panel {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+    pointer-events: auto;
+}
+
+#floating-toc:hover .ftoc-item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i) * 20ms);
+}
+
+/* 深色下：面板用更亮一档的背景，做出悬浮层次 */
+[data-theme="dark"] .ftoc-panel {
+    background: rgb(38, 39, 43);
+}
+
+/* 尊重“减少动态效果”系统偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .ftoc-panel, .ftoc-item, .ftoc-rail, .ftoc-dash { transition: none; }
+    #floating-toc:hover .ftoc-item { transition-delay: 0s; }
+}
+
+/* 桌面用浮动目录，隐藏 PaperMod 默认目录框；窄屏反之 */
+@media (min-width: 1280px) {
+    details.toc { display: none; }
+}
+
+@media (max-width: 1279px) {
+    #floating-toc { display: none; }
+}
+
+/* ========================================================================
+   搜索页：极简下划线输入框 + 无卡片结果列表
+   ======================================================================== */
+.searchbox input {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    border-radius: 0;
+    padding: 10px 2px;
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--primary);
+    background: transparent;
+    transition: border-color .2s ease;
+}
+
+.searchbox input::placeholder {
+    color: var(--secondary);
+    font-weight: 400;
+}
+
+.searchbox input:focus {
+    border-bottom-color: var(--primary);
+    outline: none;
+}
+
+/* 隐藏原生清除按钮（蓝色 ×） */
+.searchbox input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+.searchResults {
+    margin: var(--content-gap) 0;
+    gap: 0;
+}
+
+.searchResults li {
+    display: block;            /* 取消两端 flex 布局 */
+    position: relative;
+    border: none;              /* 去掉灰白分割线 */
+    border-radius: 0;
+    background: transparent;
+    padding: 11px 2px;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--primary);
+    transition: font-weight .2s ease;
+}
+
+.searchResults li:hover,
+.searchResults li:focus-within,
+.searchResults li.focus {
+    transform: none;
+    font-weight: 700;          /* 悬停灵动加粗 */
+}
+
+/* 去掉右侧 >> 箭头 */
+.searchResults li svg {
+    display: none;
+}
+
+/* 灵动小黑线（参考归档页，仅悬停时从无伸出） */
+.searchResults li::after {
+    content: "";
+    display: block;
+    width: 0;
+    border-top: 2px solid var(--primary);
+    margin-top: 6px;
+    transition: width .3s ease;
+}
+
+.searchResults li:hover::after,
+.searchResults li.focus::after {
+    width: 2.4rem;
+}
+
+/* ========================================================================
+   标签索引页：极简标签云（药丸）
+   浅灰填充；悬停灵动黑色边框（黑边淡入 + 轻微上浮）
+   ======================================================================== */
+.terms-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+    margin-top: 2.2rem;
+    padding: 0;
+}
+
+.terms-tags li {
+    display: inline-block;
+    font-weight: 400;
+}
+
+.terms-tags a {
+    display: block;
+    position: relative;                /* 角标定位 */
+    background: var(--code-bg);
+    border: 1.5px solid transparent;   /* 预留边框位，悬停不跳动 */
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--primary);
+    transition: border-color .2s ease, background .2s ease, transform .2s ease, font-weight .2s ease;
+}
+
+/* 右上角篇数角标：浅灰底 + 深字小角标（折中） */
+.terms-tags .tag-count {
+    position: absolute;
+    top: -6px;
+    right: -3px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--tertiary);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 16px;
+    text-align: center;
+    box-shadow: 0 0 0 1.5px var(--theme);   /* 细白边与药丸分隔 */
+    transition: background .2s ease, color .2s ease;
+}
+
+/* 悬停时角标变深，与黑色边框呼应 */
+.terms-tags a:hover .tag-count {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+.terms-tags a:hover {
+    background: var(--theme);
+    border-color: var(--primary);     /* 灵动黑色边框 */
+    font-weight: 700;                  /* 选中加粗 */
+    transform: translateY(-2px);
+}
+
+/* ========================================================================
+   归档页：极简竖向时间轴（收敛版）
+   年份 = 标题 + 淡分隔线；竖线从分隔线一路贯通到底；
+   月份 = 左侧标签 + 线上更醒目的点（自成一行，在该月文章上方，不与文章点重叠）；
+   每篇文章 = 线上的小实心点；悬停：圆点变深 + 标题下短黑线伸出（仅悬停）
+   时间轴主线 x ≈ 76px
+   ======================================================================== */
+.archive-year {
+    position: relative;
+    margin: 2.4rem 0 0;
+    padding-left: 0;
+    border: none;
+}
+
+/* 年份：整年文章上方的标题 + 淡淡的分隔线 */
+.archive-year-header {
+    width: auto;
+    margin: 0 0 0.2rem;
+    padding-bottom: 0.45rem;
+    text-align: left;
+    font-family: var(--sans);
+    font-size: 27px;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+}
+
+.archive-year-header .archive-count { display: none; }
+
+/* 竖线：从年份分隔线下方一路贯通到最后一个点 */
+.archive-year::before {
+    content: "";
+    position: absolute;
+    left: 76px;
+    top: 42px;
+    bottom: 18px;
+    width: 2px;
+    background: var(--border);
+}
+
+.archive-month {
+    display: block;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 月份：左侧标签，自成一行，右侧带一个更醒目的节点 */
+.archive-month-header {
+    position: relative;
+    width: 68px;
+    margin: 1.1rem 0 0.2rem;
+    padding: 0;
+    text-align: right;
+    font-family: var(--sans);
+    font-size: 25px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.archive-month-header .archive-count { display: none; }
+
+/* 月份节点（落在主线上，与文章点一致） */
+.archive-month-header::after {
+    content: "";
+    position: absolute;
+    right: -12px;
+    top: 0.55em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: 0 0 0 3px var(--theme);   /* 白色光环遮住主线 */
+}
+
+.archive-posts {
+    position: relative;
+    font-size: 16px;
+}
+
+.archive-meta { display: none; }   /* 不显示日期 */
+
+.archive-entry {
+    position: relative;
+    padding: 8px 0 8px 96px;
+    margin: 0;
+    border: none;
+}
+
+/* 每篇文章 = 线上的小实心点 */
+.archive-entry::before {
+    content: "";
+    position: absolute;
+    left: 72px;
+    top: 15px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: 0 0 0 3px var(--theme);
+    transition: background .2s ease, transform .2s ease;
+}
+
+.archive-entry:hover::before {
+    background: var(--primary);
+    transform: scale(1.3);
+}
+
+/* 标题：仅悬停时短黑线从无到有伸出（不常驻） */
+.archive-entry-title {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--primary);
+    margin: 0;
+    transition: font-weight .2s ease;
+}
+
+/* 悬停加粗（与搜索结果一致） */
+.archive-entry:hover .archive-entry-title {
+    font-weight: 700;
+}
+
+.archive-entry-title::after {
+    content: "";
+    display: block;
+    width: 0;
+    border-top: 2px solid var(--primary);
+    margin-top: 0.4rem;
+    transition: width .3s ease;
+}
+
+.archive-entry:hover .archive-entry-title::after {
+    width: 2.4rem;
 }

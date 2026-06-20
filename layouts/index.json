@@ -1,0 +1,8 @@
+{{- /* 搜索索引：用局部变量(每次渲染全新)，避免 .Scratch 在热重载时累加导致重复 */ -}}
+{{- $list := slice -}}
+{{- range site.RegularPages -}}
+{{- if and (not .Params.searchHidden) (ne .Layout "archives") (ne .Layout "search") -}}
+{{- $list = $list | append (dict "title" .Title "content" .Plain "permalink" .Permalink "summary" .Summary) -}}
+{{- end -}}
+{{- end -}}
+{{- $list | jsonify -}}

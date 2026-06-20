@@ -1,0 +1,16 @@
+{{- define "main" }}
+
+<div class="tags-index">
+  <ul class="terms-tags">
+    {{- $type := .Type }}
+    {{- range $key, $value := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- $count := .Count }}
+      {{- with site.GetPage (printf "/%s/%s" $type $name) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}<span class="tag-count">{{ $count }}</span></a></li>
+      {{- end }}
+    {{- end }}
+  </ul>
+</div>
+
+{{- end }}{{/* end main */ -}}

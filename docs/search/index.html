@@ -10,8 +10,8 @@
 <meta name="description" content="搜索 - 山渐清">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/search/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.7ac91902a767ab0e29ba294dd7197c85d63debb03b655aef62df9dd3886d4af2.css" integrity="sha256-eskZAqdnqw4puilN1xl8hdY967A7ZVrvYt&#43;d04htSvI=" rel="preload stylesheet" as="style"><link crossorigin="anonymous" rel="preload" as="fetch" href="../index.json">
-<script defer crossorigin="anonymous" src="/assets/js/search.e229e8d51c221f102254c8cc8c10b254d8f4faf0a0141b78d4827f9d925d6541.js" integrity="sha256-4ino1RwiHxAiVMjMjBCyVNj0&#43;vCgFBt41IJ/nZJdZUE="></script>
+<link crossorigin="anonymous" href="/assets/css/stylesheet.af118b6a6561c081b3636a31e04a928af99084330ddb44e63cb8812f4c5c2dcd.css" integrity="sha256-rxGLamVhwIGzY2ox4EqSivmQhDMN20TmPLiBL0xcLc0=" rel="preload stylesheet" as="style"><link crossorigin="anonymous" rel="preload" as="fetch" href="../index.json">
+<script defer crossorigin="anonymous" src="/assets/js/search.fa44c4f5b422e39d0c5932a116488df1b094a8c47d56665133eaaa578f419dcc.js" integrity="sha256-&#43;kTE9bQi450MWTKhFkiN8bCUqMR9VmZRM&#43;qqV49Bncw="></script>
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -67,7 +67,7 @@
 
 </script><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <meta property="og:url" content="https://JianQing-Shan.github.io/search/">
   <meta property="og:site_name" content="山渐清">
   <meta property="og:title" content="搜索">
@@ -192,7 +192,7 @@
 </header>
 
 <div id="searchbox" class="searchbox">
-    <input id="searchInput" disabled placeholder="搜索 ↵"
+    <input id="searchInput" disabled placeholder="搜索"
         aria-label="search" type="search" autocomplete="off" maxlength="64">
     <ul id="searchResults" class="searchResults" aria-label="search results"></ul>
 </div>
@@ -205,6 +205,101 @@
         <polyline points="17 18 12 13 7 18"></polyline>
     </svg>
 </a>
+<script>
+(function () {
+   
+  var bar = document.createElement('div');
+  bar.id = 'reading-progress';
+  document.body.appendChild(bar);
+
+  
+
+  var _p = location.pathname;
+  var _isArticle = _p.indexOf('/posts/') === 0 && _p !== '/posts/';
+  var _isTagTerm = _p.indexOf('/tags/') === 0 && _p !== '/tags/';
+  if (_isArticle || _isTagTerm) {
+    var logo = document.querySelector('.header-nav .logo');
+    if (logo) {
+      var back = document.createElement('a');
+      back.id = 'post-back';
+      back.href = _isTagTerm ? '/tags/' : '/posts/';
+      back.setAttribute('aria-label', '返回');
+      back.setAttribute('title', '返回');
+      back.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+      back.addEventListener('click', function (e) {
+        var fromSameSite = document.referrer && new URL(document.referrer).origin === location.origin;
+        if (fromSameSite && window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+      });
+      logo.insertBefore(back, logo.firstChild);
+    }
+  }
+
+   
+  var content = document.querySelector('.post-content');
+  var rows = [];
+  if (content) {
+    var heads = [].slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id]'));
+    if (heads.length >= 2) {
+      var nav = document.createElement('nav');
+      nav.id = 'floating-toc';
+      nav.setAttribute('aria-label', '目录');
+      var rail = document.createElement('div'); rail.className = 'ftoc-rail';
+      var panel = document.createElement('div'); panel.className = 'ftoc-panel';
+
+      rows = heads.map(function (h, idx) {
+        var lvl = h.tagName.charAt(1);
+        var dash = document.createElement('span');
+        dash.className = 'ftoc-dash';
+        dash.setAttribute('data-level', lvl);
+        var item = document.createElement('a');
+        item.className = 'ftoc-item';
+        item.href = '#' + h.id;
+        item.setAttribute('data-level', lvl);
+        item.textContent = (h.textContent || '').replace(/#\s*$/, '').trim();
+        item.style.setProperty('--i', idx);
+        rail.appendChild(dash);
+        panel.appendChild(item);
+        return { dash: dash, item: item, head: h };
+      });
+
+      nav.appendChild(rail);
+      nav.appendChild(panel);
+      document.body.appendChild(nav);
+    }
+  }
+
+  var ticking = false;
+  function update() {
+    ticking = false;
+
+    var docH = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+    bar.style.width = (pct < 0 ? 0 : pct > 100 ? 100 : pct) + '%';
+
+    if (rows.length) {
+      var pos = window.scrollY + window.innerHeight * 0.25;
+      var cur = 0;
+      for (var i = 0; i < rows.length; i++) {
+        var top = rows[i].head.getBoundingClientRect().top + window.scrollY;
+        if (top - 4 <= pos) cur = i; else break;
+      }
+      for (var j = 0; j < rows.length; j++) {
+        var on = j === cur;
+        rows[j].dash.classList.toggle('active', on);
+        rows[j].item.classList.toggle('active', on);
+      }
+    }
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+</script>
+
 
 <script>
     let menu = document.getElementById('menu');
