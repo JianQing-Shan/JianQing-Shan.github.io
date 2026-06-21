@@ -68,7 +68,7 @@
 回看这三十年，要守住那个贯穿始终的判断：它走到这一步，靠的不是某种命运，而是一连串本可不同的选择、误判和偶然。一战的爆发是几样东西恰好同时失灵，纳粹的上台是大萧条打断了魏玛短暂的企稳，大萧条的深度是金本位枷锁和政策错误的人造产物，战争的引爆是绥靖没能拦住一个已转入战争轨道的德国——每一个关键节点都本可不同。结构施加了清晰的压力，让灾难变得可能且容易，但把它变成现实的，始终是具体的人在具体时刻的作为。那个旧世界回不来了，而新世界还没有定型。">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/posts/the-collapse-of-the-old-world/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.6d3d0b7d1b3e866096d87e5c4e2694ce34f2d13c190d6aad589c0aef8b067de6.css" integrity="sha256-bT0LfRs&#43;hmCW2H5cTiaUzjTy0TwZDWqtWJwK74sGfeY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.b78d1cf253432532ab7c592d8d0aa9fffdaa209ed08a4b0bba67d7f87cdf618f.css" integrity="sha256-t40c8lNDJTKrfFktjQqp//2qIJ7QiksLumfX&#43;HzfYY8=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -125,6 +125,7 @@
 </script><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="series" content="现代世界史">
 <meta property="og:url" content="https://JianQing-Shan.github.io/posts/the-collapse-of-the-old-world/">
   <meta property="og:site_name" content="山渐清">
   <meta property="og:title" content="1914-1945：旧世界的崩塌——大萧条与世界大战">
@@ -500,10 +501,65 @@
     if (!a) return;
     if (a.id === 'post-back' || a.closest('.post-nav-arrow') || a.closest('.paginav')) return;
     var list = ctxOf(a);
-    if (list && list.length > 1) {
-      try { sessionStorage.setItem('nav-ctx', JSON.stringify(list)); } catch (err) {}
+    if (list && list.length) {
+      try {
+        sessionStorage.setItem('nav-ctx', JSON.stringify(list));
+        sessionStorage.setItem('nav-from', location.pathname + location.search + location.hash);  
+      } catch (err) {}
     }
   }, true);
+
+  
+  (function () {
+    var anchor;
+    try { anchor = sessionStorage.getItem('nav-anchor'); } catch (e) { return; }
+    if (!anchor) return;
+    try { sessionStorage.removeItem('nav-anchor'); } catch (e) {}
+    var links = document.querySelectorAll('.entry-link, .series-card-list a');
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].pathname === anchor) {
+        var row = links[i].closest('.post-entry, .first-entry, .archive-entry, .series-card-list li') || links[i];
+        row.scrollIntoView({ block: 'center' });
+        row.classList.add('nav-return-flash');
+        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1500);
+        break;
+      }
+    }
+  })();
+
+  
+  if (location.pathname.indexOf('/search') === 0) {
+    var sinp = document.getElementById('searchInput');
+    var sres = document.getElementById('searchResults');
+    if (sinp && sres) {
+      sinp.addEventListener('input', function () {
+        var v = sinp.value.trim();
+        history.replaceState(null, '', v ? (location.pathname + '?query=' + encodeURIComponent(v)) : location.pathname);
+      });
+      
+      sres.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('a.entry-link')) {
+          try { sessionStorage.setItem('search-cache', JSON.stringify({ q: sinp.value, html: sres.innerHTML })); } catch (err) {}
+        }
+      }, true);
+      
+      var q = new URLSearchParams(location.search).get('query');
+      if (q) {
+        sinp.value = q;
+        var cache = null;
+        try { cache = JSON.parse(sessionStorage.getItem('search-cache') || 'null'); } catch (err) {}
+        if (cache && cache.q === q && cache.html) {
+          sres.innerHTML = cache.html;
+        } else {
+          var tries = 0;
+          var timer = setInterval(function () {
+            sinp.dispatchEvent(new Event('input', { bubbles: true }));
+            if (sres.children.length || ++tries > 12) clearInterval(timer);
+          }, 250);
+        }
+      }
+    }
+  }
 })();
 </script>
 <script>
@@ -528,9 +584,16 @@
       var fallback = _isTagTerm ? '/tags/' : _isSeriesTerm ? '/series/' : '/posts/';
       var goBack = function (e) {
         e.preventDefault();
-        var fromSameSite = document.referrer && new URL(document.referrer).origin === location.origin;
-        if (fromSameSite && window.history.length > 1) window.history.back();
-        else location.href = fallback;
+        if (_isArticle) {
+          try { sessionStorage.setItem('nav-anchor', location.pathname); } catch (err) {}  
+          var navFrom = null;
+          try { navFrom = sessionStorage.getItem('nav-from'); } catch (err) {}
+          if (matched && navFrom) { location.href = navFrom; return; }   
+          var sm = document.querySelector('meta[name="series"]');         
+          location.href = (sm && sm.content) ? '/series/#' + encodeURIComponent(sm.content) : '/posts/';
+          return;
+        }
+        location.href = fallback;   
       };
       var logoLink = logo.querySelector('a');               
       var back = document.createElement('a');

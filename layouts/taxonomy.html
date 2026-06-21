@@ -8,7 +8,7 @@
     {{- range $i, $e := .Data.Terms.Alphabetical }}
       {{- $name := .Name }}
       {{- with site.GetPage (printf "/series/%s" $name) }}
-      <button type="button" class="series-name-item" data-key="s{{ $i }}">{{ .LinkTitle }}</button>
+      <button type="button" class="series-name-item" data-key="{{ $name }}">{{ .LinkTitle }}</button>
       {{- end }}
     {{- end }}
   </div>
@@ -16,7 +16,7 @@
     {{- range $i, $e := .Data.Terms.Alphabetical }}
       {{- $name := .Name }}
       {{- with site.GetPage (printf "/series/%s" $name) }}
-      <div class="series-card" data-key="s{{ $i }}" hidden>
+      <div class="series-card" data-key="{{ $name }}" hidden>
         <ol class="series-card-list">
           {{- range (.Pages.ByParam "series-order") }}
           <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
@@ -34,25 +34,30 @@
   var names = [].slice.call(master.querySelectorAll('.series-name-item'));
   var cards = [].slice.call(master.querySelectorAll('.series-card'));
   var active = null;
-  function show(key) {
+  function show(key, setHash) {
     active = key;
     cards.forEach(function (c) { c.hidden = c.getAttribute('data-key') !== key; });
     names.forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-key') === key); });
     master.classList.add('is-open');
+    if (setHash) history.replaceState(null, '', '#' + encodeURIComponent(key));   // 展开 → 地址带上 #系列名，便于分享
   }
   function hide() {
     active = null;
     master.classList.remove('is-open');
     names.forEach(function (n) { n.classList.remove('active'); });
+    history.replaceState(null, '', location.pathname + location.search);          // 收起 → 清掉 #
   }
   names.forEach(function (n) {
     n.addEventListener('click', function () {
       var key = n.getAttribute('data-key');
-      if (active === key) hide(); else show(key);
+      if (active === key) hide(); else show(key, true);
     });
   });
-  // 默认展开排在最前(首字母序)的系列；同步执行，首屏直接是展开态、无加载动画
-  if (names[0]) show(names[0].getAttribute('data-key'));
+  // 加载：URL 带 #且匹配到系列 → 展开它；否则默认展开第一个并写入 #，让地址始终与展开状态一致
+  var fromHash = decodeURIComponent((location.hash || '').slice(1));
+  var hit = fromHash && names.some(function (n) { return n.getAttribute('data-key') === fromHash; });
+  if (hit) show(fromHash, false);
+  else if (names[0]) show(names[0].getAttribute('data-key'), true);   // 默认展开第一个，也把 # 写进地址，保证 URL 始终反映当前展开的系列
 })();
 </script>
 

@@ -4,6 +4,15 @@ title: "山渐清"
 theme: "PaperMod"
 publishDir: "docs"
 cleanDestinationDir: true   # 每次构建清掉 docs/ 旧产物，避免删稿后残留
+
+# 关闭"系列"词条页的输出(/series/<名>/)——系列体验是 /series/ 单页主从，词条页用不到
+# 仅命中 series 的 term 页：tags 词条页(/tags/<标签>/)和 /series/ 主从页都不受影响
+cascade:
+  - _target:
+      kind: term
+      path: /series/**
+    build:
+      render: never
 locale: "zh-cn"
 buildFuture: true
 

@@ -2,8 +2,8 @@
    山渐清 · 外观定制层（PaperMod extended CSS，只覆盖、不改主题子模块）
    设计基调：Tale 式极简 + 安静的中文阅读体验
 
-   字体：标题/正文/日期=衬线（英文 Times New Roman + 中文宋体）；
-         导航·菜单·PREV/NEXT·标签=无衬线黑体；页脚/主页标语=Palatino
+   字体：标题/正文/日期/主页标语=衬线（英文 Times New Roman + 中文宋体）；
+         导航·菜单·PREV/NEXT·标签·页脚=无衬线黑体（两套，不再用第三种字体）
    配色：标题 #353535 / 正文 #555 / 次要 #aaa / 边框 #e5e5e5 / 链接 #4a9ae1
    交互：“灵动”仅用于导航与索引（标题/列表/标签/搜索的悬停短黑线、阅读进度线、
          浮动目录、返回箭头）；正文保持绝对安静，不加任何悬停效果
@@ -34,7 +34,6 @@
     /* 字体栈（Tale 同款） */
     --serif: 'Times New Roman', Times, 'Songti SC', SimSun, STSong, 'Noto Serif SC', serif;
     --sans: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Helvetica, Arial, sans-serif;
-    --serif-meta: Palatino, 'Palatino Linotype', 'Book Antiqua', Georgia, 'Songti SC', serif;
 }
 
 :root[data-theme="dark"] {
@@ -349,8 +348,8 @@ h1, h2, h3, h4, h5, h6 {
 .profile .profile_inner span,
 .profile .profile_inner b,
 .profile .profile_inner p {
-    font-family: var(--serif-meta);
-    font-style: italic;
+    font-family: var(--serif);
+    font-style: normal;
     color: var(--secondary);
     font-weight: 400;
 }
@@ -374,7 +373,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer {
-    font-family: var(--serif-meta);
+    font-family: var(--sans);
     color: var(--secondary);
     font-size: 13px;
 }
@@ -1027,3 +1026,12 @@ h1, h2, h3, h4, h5, h6 {
 .archive-entry:hover .archive-entry-title::after {
     width: 2.4rem;
 }
+
+/* ========================================================================
+   从文章返回列表后，短暂高亮回到的那一行（配合 extend_footer 的滚动定位）
+   ======================================================================== */
+@keyframes navReturnFlash {
+    0%, 35% { background: var(--code-bg); }
+    100%    { background: transparent; }
+}
+.nav-return-flash { animation: navReturnFlash 1.5s ease; }
