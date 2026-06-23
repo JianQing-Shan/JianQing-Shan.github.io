@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/series/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.b78d1cf253432532ab7c592d8d0aa9fffdaa209ed08a4b0bba67d7f87cdf618f.css" integrity="sha256-t40c8lNDJTKrfFktjQqp//2qIJ7QiksLumfX&#43;HzfYY8=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.3d3c8ace198e4421a70b085d72a025bca1609b983c040ca4364473966640cd26.css" integrity="sha256-PTyKzhmORCGnCwhdcqAlvKFgm5g8BAykNkRzlmZAzSY=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -137,17 +137,8 @@
 </header>
 <main class="main"><div class="series-master" id="series-master">
   <div class="series-names">
-      <button type="button" class="series-name-item" data-key="现代世界史">现代世界史</button>
   </div>
   <div class="series-detail" aria-live="polite">
-      <div class="series-card" data-key="现代世界史" hidden>
-        <ol class="series-card-list">
-          <li><a href="https://JianQing-Shan.github.io/posts/the-birth-of-the-modern-world-system/">1870-1914：现代世界体系的诞生——工业革命、阶级与民族</a></li>
-          <li><a href="https://JianQing-Shan.github.io/posts/the-collapse-of-the-old-world/">1914-1945：旧世界的崩塌——大萧条与世界大战</a></li>
-          <li><a href="https://JianQing-Shan.github.io/posts/the-solidification-of-the-cold-war-landscape/">1945-1950：铁幕落下——冷战格局的凝固</a></li>
-          <li><a href="https://JianQing-Shan.github.io/posts/cold-war-golden-age/">1950-1968：冷战黄金时代——繁荣与裂变</a></li>
-        </ol>
-      </div>
   </div>
 </div>
 <script>
@@ -157,30 +148,80 @@
   var names = [].slice.call(master.querySelectorAll('.series-name-item'));
   var cards = [].slice.call(master.querySelectorAll('.series-card'));
   var active = null;
+
+  function numOf(li) { var a = li.querySelector('a'); return a ? +a.getAttribute('data-num') : 0; }
+
+   
+  function reorder(card, desc, animate) {
+    var ol = card.querySelector('.series-card-list');
+    if (!ol) return;
+    var items = [].slice.call(ol.children);
+    var firsts = animate ? items.map(function (li) { return li.getBoundingClientRect().top; }) : null;
+    items.sort(function (x, y) { return desc ? numOf(y) - numOf(x) : numOf(x) - numOf(y); });
+    items.forEach(function (li) { ol.appendChild(li); });
+    card.classList.toggle('desc', desc);
+    if (animate) {
+      items.forEach(function (li, i) {
+        var dy = firsts[i] - li.getBoundingClientRect().top;
+        li.style.transition = 'none';
+        li.style.transform = 'translateY(' + dy + 'px)';
+      });
+      ol.offsetHeight;  
+      items.forEach(function (li) {
+        li.style.transition = 'transform .4s cubic-bezier(.22, 1, .36, 1)';
+        li.style.transform = '';
+      });
+      setTimeout(function () { items.forEach(function (li) { li.style.transition = ''; li.style.transform = ''; }); }, 460);
+    }
+  }
+
+  function savedDesc(key) {
+    try { return localStorage.getItem('series-order:' + key) === 'desc'; } catch (e) { return false; }
+  }
+
   function show(key, setHash) {
     active = key;
-    cards.forEach(function (c) { c.hidden = c.getAttribute('data-key') !== key; });
+    cards.forEach(function (c) {
+      var on = c.getAttribute('data-key') === key;
+      c.hidden = !on;
+      if (on) reorder(c, savedDesc(key), false);    
+    });
     names.forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-key') === key); });
     master.classList.add('is-open');
-    if (setHash) history.replaceState(null, '', '#' + encodeURIComponent(key));   
+    if (setHash) history.replaceState(null, '', '#' + encodeURIComponent(key));
   }
   function hide() {
     active = null;
     master.classList.remove('is-open');
     names.forEach(function (n) { n.classList.remove('active'); });
-    history.replaceState(null, '', location.pathname + location.search);          
+    history.replaceState(null, '', location.pathname + location.search);
   }
+
   names.forEach(function (n) {
     n.addEventListener('click', function () {
       var key = n.getAttribute('data-key');
       if (active === key) hide(); else show(key, true);
     });
   });
-  
+
+   
+  cards.forEach(function (c) {
+    var btn = c.querySelector('.series-sort');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var key = c.getAttribute('data-key');
+      var desc = !c.classList.contains('desc');
+      reorder(c, desc, true);
+      try { localStorage.setItem('series-order:' + key, desc ? 'desc' : 'asc'); } catch (err) {}
+    });
+  });
+
+   
   var fromHash = decodeURIComponent((location.hash || '').slice(1));
   var hit = fromHash && names.some(function (n) { return n.getAttribute('data-key') === fromHash; });
   if (hit) show(fromHash, false);
-  else if (names[0]) show(names[0].getAttribute('data-key'), true);   
+  else if (names[0]) show(names[0].getAttribute('data-key'), true);
 })();
 </script>
     </main>
@@ -235,7 +276,7 @@
         var row = links[i].closest('.post-entry, .first-entry, .archive-entry, .series-card-list li') || links[i];
         row.scrollIntoView({ block: 'center' });
         row.classList.add('nav-return-flash');
-        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1500);
+        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1000);
         break;
       }
     }

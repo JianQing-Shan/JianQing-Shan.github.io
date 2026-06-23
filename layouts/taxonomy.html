@@ -1,8 +1,9 @@
 {{- define "main" }}
 
 {{- if eq .Type "series" }}
-{{- /* 系列：单页主从——左侧系列名(默认居中)，点击在右侧展开该系列的连载卡片
-       (仿归档：竖线+节点，序号代替日期；文章按 series-order 排)。再点收起。 */ -}}
+{{- /* 系列：单页主从——左侧系列名，点击在右侧展开该系列的连载卡片
+       (仿归档：竖线+节点，data-num 序号代替日期；文章按 series-order 排)。
+       卡片右上角有正序/倒序切换(双雪佛龙，点击 rotateX 翻转 + 列表 FLIP 滑动)。 */ -}}
 <div class="series-master" id="series-master">
   <div class="series-names">
     {{- range $i, $e := .Data.Terms.Alphabetical }}
@@ -17,9 +18,16 @@
       {{- $name := .Name }}
       {{- with site.GetPage (printf "/series/%s" $name) }}
       <div class="series-card" data-key="{{ $name }}" hidden>
+        <div class="series-card-head">
+          <button type="button" class="series-sort" aria-label="正序 / 倒序" title="正序 / 倒序（点击切换）">
+            <span class="series-sort-ico">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 13 12 8 18 13"></polyline><polyline points="6 18 12 13 18 18"></polyline></svg>
+            </span>
+          </button>
+        </div>
         <ol class="series-card-list">
-          {{- range (.Pages.ByParam "series-order") }}
-          <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+          {{- range $idx, $p := (.Pages.ByParam "series-order") }}
+          <li><a data-num="{{ printf "%02d" (add $idx 1) }}" href="{{ $p.Permalink }}">{{ $p.Title }}</a></li>
           {{- end }}
         </ol>
       </div>
@@ -34,30 +42,80 @@
   var names = [].slice.call(master.querySelectorAll('.series-name-item'));
   var cards = [].slice.call(master.querySelectorAll('.series-card'));
   var active = null;
+
+  function numOf(li) { var a = li.querySelector('a'); return a ? +a.getAttribute('data-num') : 0; }
+
+  /* 按 data-num 排列卡片内文章；desc=倒序；animate 时用 FLIP 平滑滑动 */
+  function reorder(card, desc, animate) {
+    var ol = card.querySelector('.series-card-list');
+    if (!ol) return;
+    var items = [].slice.call(ol.children);
+    var firsts = animate ? items.map(function (li) { return li.getBoundingClientRect().top; }) : null;
+    items.sort(function (x, y) { return desc ? numOf(y) - numOf(x) : numOf(x) - numOf(y); });
+    items.forEach(function (li) { ol.appendChild(li); });
+    card.classList.toggle('desc', desc);
+    if (animate) {
+      items.forEach(function (li, i) {
+        var dy = firsts[i] - li.getBoundingClientRect().top;
+        li.style.transition = 'none';
+        li.style.transform = 'translateY(' + dy + 'px)';
+      });
+      ol.offsetHeight; /* 强制重排，让上面的归位生效 */
+      items.forEach(function (li) {
+        li.style.transition = 'transform .4s cubic-bezier(.22, 1, .36, 1)';
+        li.style.transform = '';
+      });
+      setTimeout(function () { items.forEach(function (li) { li.style.transition = ''; li.style.transform = ''; }); }, 460);
+    }
+  }
+
+  function savedDesc(key) {
+    try { return localStorage.getItem('series-order:' + key) === 'desc'; } catch (e) { return false; }
+  }
+
   function show(key, setHash) {
     active = key;
-    cards.forEach(function (c) { c.hidden = c.getAttribute('data-key') !== key; });
+    cards.forEach(function (c) {
+      var on = c.getAttribute('data-key') === key;
+      c.hidden = !on;
+      if (on) reorder(c, savedDesc(key), false);   /* 展开时按该系列记忆的方向（无动画） */
+    });
     names.forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-key') === key); });
     master.classList.add('is-open');
-    if (setHash) history.replaceState(null, '', '#' + encodeURIComponent(key));   // 展开 → 地址带上 #系列名，便于分享
+    if (setHash) history.replaceState(null, '', '#' + encodeURIComponent(key));
   }
   function hide() {
     active = null;
     master.classList.remove('is-open');
     names.forEach(function (n) { n.classList.remove('active'); });
-    history.replaceState(null, '', location.pathname + location.search);          // 收起 → 清掉 #
+    history.replaceState(null, '', location.pathname + location.search);
   }
+
   names.forEach(function (n) {
     n.addEventListener('click', function () {
       var key = n.getAttribute('data-key');
       if (active === key) hide(); else show(key, true);
     });
   });
-  // 加载：URL 带 #且匹配到系列 → 展开它；否则默认展开第一个并写入 #，让地址始终与展开状态一致
+
+  /* 正序/倒序切换：箭头 rotateX 翻转(CSS) + 列表 FLIP 滑动；按系列记忆 */
+  cards.forEach(function (c) {
+    var btn = c.querySelector('.series-sort');
+    if (!btn) return;
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var key = c.getAttribute('data-key');
+      var desc = !c.classList.contains('desc');
+      reorder(c, desc, true);
+      try { localStorage.setItem('series-order:' + key, desc ? 'desc' : 'asc'); } catch (err) {}
+    });
+  });
+
+  /* 加载：URL 带 #且匹配到系列 → 展开它；否则默认展开第一个并写入 #，让地址始终反映展开状态 */
   var fromHash = decodeURIComponent((location.hash || '').slice(1));
   var hit = fromHash && names.some(function (n) { return n.getAttribute('data-key') === fromHash; });
   if (hit) show(fromHash, false);
-  else if (names[0]) show(names[0].getAttribute('data-key'), true);   // 默认展开第一个，也把 # 写进地址，保证 URL 始终反映当前展开的系列
+  else if (names[0]) show(names[0].getAttribute('data-key'), true);
 })();
 </script>
 

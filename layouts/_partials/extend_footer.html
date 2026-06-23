@@ -44,7 +44,7 @@
         var row = links[i].closest('.post-entry, .first-entry, .archive-entry, .series-card-list li') || links[i];
         row.scrollIntoView({ block: 'center' });
         row.classList.add('nav-return-flash');
-        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1500);
+        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1000);
         break;
       }
     }
