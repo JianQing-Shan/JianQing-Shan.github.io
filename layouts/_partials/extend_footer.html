@@ -83,6 +83,39 @@
       }
     }
   }
+
+  // —— 手机端汉堡菜单：☰ 收起/展开导航（按钮注入，仅 ≤768px 由 CSS 显示）——
+  (function () {
+    var nav = document.querySelector('.header-nav');
+    var menu = nav && nav.querySelector('#menu');
+    if (!nav || !menu || nav.querySelector('.nav-burger')) return;
+    var burger = document.createElement('button');
+    burger.type = 'button';
+    burger.className = 'nav-burger';
+    burger.setAttribute('aria-label', '菜单');
+    burger.setAttribute('aria-controls', 'menu');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.innerHTML = '<span></span><span></span><span></span>';
+    nav.insertBefore(burger, menu);
+
+    function setOpen(open) {
+      nav.classList.toggle('menu-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    burger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!nav.classList.contains('menu-open'));
+    });
+    menu.addEventListener('click', function (e) {                 // 点菜单项 → 收起
+      if (e.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('click', function (e) {             // 点面板外空白 → 收起
+      if (nav.classList.contains('menu-open') && !nav.contains(e.target)) setOpen(false);
+    });
+    window.addEventListener('resize', function () {               // 回到桌面宽度 → 复位
+      if (window.innerWidth > 768 && nav.classList.contains('menu-open')) setOpen(false);
+    });
+  })();
 })();
 </script>
 

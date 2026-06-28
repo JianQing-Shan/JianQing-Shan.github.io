@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/tags/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.3d3c8ace198e4421a70b085d72a025bca1609b983c040ca4364473966640cd26.css" integrity="sha256-PTyKzhmORCGnCwhdcqAlvKFgm5g8BAykNkRzlmZAzSY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.261a8334cd31283ba4ea4fa9671109fc704634804513a143fa47e7f89a9296fd.css" integrity="sha256-JhqDNM0xKDuk6k&#43;pZxEJ/HBGNIBFE6FD&#43;kfn&#43;JqSlv0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -65,9 +65,7 @@
         document.querySelector("html").dataset.theme = 'light';
     }
 
-</script><link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</script>
 <meta property="og:url" content="https://JianQing-Shan.github.io/tags/">
   <meta property="og:site_name" content="山渐清">
   <meta property="og:title" content="Tags">
@@ -230,6 +228,39 @@
       }
     }
   }
+
+  
+  (function () {
+    var nav = document.querySelector('.header-nav');
+    var menu = nav && nav.querySelector('#menu');
+    if (!nav || !menu || nav.querySelector('.nav-burger')) return;
+    var burger = document.createElement('button');
+    burger.type = 'button';
+    burger.className = 'nav-burger';
+    burger.setAttribute('aria-label', '菜单');
+    burger.setAttribute('aria-controls', 'menu');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.innerHTML = '<span></span><span></span><span></span>';
+    nav.insertBefore(burger, menu);
+
+    function setOpen(open) {
+      nav.classList.toggle('menu-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    burger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!nav.classList.contains('menu-open'));
+    });
+    menu.addEventListener('click', function (e) {                 
+      if (e.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('click', function (e) {             
+      if (nav.classList.contains('menu-open') && !nav.contains(e.target)) setOpen(false);
+    });
+    window.addEventListener('resize', function () {               
+      if (window.innerWidth > 768 && nav.classList.contains('menu-open')) setOpen(false);
+    });
+  })();
 })();
 </script>
 

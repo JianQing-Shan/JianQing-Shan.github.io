@@ -41,6 +41,7 @@ params:
     threshold: 0.3
     minMatchCharLength: 1
     ignoreLocation: true
+    includeMatches: true   # 返回命中位置，供搜索结果截取高亮上下文片段
     keys: ["title", "summary", "content"]
   disableAnchoredHeadings: true
   ShowToc: true

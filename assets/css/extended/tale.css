@@ -132,7 +132,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0 0 calc(var(--gap) * 1.3) 0;
     margin-bottom: calc(var(--gap) * 1.3);
     border-bottom: 1px solid var(--border);   /* 文章之间淡淡的分割线 (#e5e5e5) */
-    transition: none;
+    transition: transform .25s ease;
 }
 
 .post-entry:last-child {
@@ -141,7 +141,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .post-entry:hover,
 .post-entry:focus-within {
-    transform: none;
+    transform: translateY(-1px);   /* 灵动跃起，与搜索/归档/系列同款 */
     border-color: var(--border);
 }
 
@@ -572,39 +572,72 @@ h1, h2, h3, h4, h5, h6 {
     border: none;              /* 去掉灰白分割线 */
     border-radius: 0;
     background: transparent;
-    padding: 11px 2px;
+    padding: 15px 2px;         /* 条间更松：相邻结果间距 ≈30px，分组更清晰 */
+    color: var(--primary);
+}
+
+/* 点击层：覆盖整条（标题 + 片段任意处都可点） */
+.searchResults li .entry-link {
+    position: absolute;
+    inset: 0;
+}
+
+/* 跃起：覆盖 PaperMod 默认的 -2px，统一为 -1px（与归档/系列一致） */
+.searchResults li:hover,
+.searchResults li:focus-within,
+.searchResults li.focus {
+    transform: translateY(-1px);
+}
+
+/* 标题 */
+.searchResults li .search-title {
     font-family: var(--serif);
     font-size: 17px;
     font-weight: 400;
     color: var(--primary);
     transition: font-weight .2s ease;
 }
-
-.searchResults li:hover,
-.searchResults li:focus-within,
-.searchResults li.focus {
-    transform: none;
-    font-weight: 700;          /* 悬停灵动加粗 */
+.searchResults li:hover .search-title,
+.searchResults li:focus-within .search-title,
+.searchResults li.focus .search-title {
+    font-weight: 700;          /* 悬停只加粗标题 */
 }
 
-/* 去掉右侧 >> 箭头 */
-.searchResults li svg {
-    display: none;
-}
-
-/* 灵动小黑线（参考归档页，仅悬停时从无伸出） */
-.searchResults li::after {
-    content: "";
+/* 标题与片段之间的灵动小黑线（仅悬停伸出） */
+.searchResults li .search-line {
     display: block;
     width: 0;
     border-top: 2px solid var(--primary);
-    margin-top: 6px;
+    margin: 3px 0;             /* 条内更紧：标题↔片段 ≈8px，绑成一组 */
     transition: width .3s ease;
 }
-
-.searchResults li:hover::after,
-.searchResults li.focus::after {
+.searchResults li:hover .search-line,
+.searchResults li.focus .search-line {
     width: 2.4rem;
+}
+
+/* 命中正文片段（次要灰、较小、最多两行） */
+.searchResults li .search-snippet {
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 关键词高亮：沿用全站“聚焦”语言——主色 + 加粗（无色块），在灰底片段里自然跳出 */
+.searchResults li .search-hl {
+    background: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* 去掉右侧 >> 箭头（保险） */
+.searchResults li svg {
+    display: none;
 }
 
 /* ========================================================================
@@ -776,7 +809,7 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.4;
     color: var(--primary);
     text-decoration: none;
-    transition: font-weight .2s ease;
+    transition: font-weight .2s ease, transform .25s ease;
 }
 
 /* 序号(代替归档里的日期)，放标题左侧 */
@@ -792,6 +825,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .series-card-list li:hover a {
     font-weight: 700;
+    transform: translateY(-1px);   /* 灵动跃起，与搜索/归档同款 */
 }
 
 /* 悬停灵动小线（与列表/归档/搜索一致） */
@@ -896,7 +930,7 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--theme);
     border-color: var(--primary);     /* 灵动黑色边框 */
     font-weight: 700;                  /* 选中加粗 */
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 /* ========================================================================
@@ -1027,12 +1061,13 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.4;
     color: var(--primary);
     margin: 0;
-    transition: font-weight .2s ease;
+    transition: font-weight .2s ease, transform .25s ease;
 }
 
-/* 悬停加粗（与搜索结果一致） */
+/* 悬停：加粗 + 灵动跃起（与搜索结果同款 -2px；只抬标题，不动时间轴圆点） */
 .archive-entry:hover .archive-entry-title {
     font-weight: 700;
+    transform: translateY(-1px);
 }
 
 .archive-entry-title::after {
@@ -1056,3 +1091,93 @@ h1, h2, h3, h4, h5, h6 {
     100%    { background: transparent; }
 }
 .nav-return-flash { animation: navReturnFlash 1s ease; }
+
+/* ========================================================================
+   手机端汉堡菜单（☰ / ✕）——按钮由 extend_footer.html 注入，仅 ≤768px 生效。
+   PC/平板(>768px)汉堡隐藏、菜单仍横排，行为完全不变。
+   ======================================================================== */
+.nav-burger {
+    display: none;                 /* 默认（桌面）隐藏 */
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    padding: 9px 8px;
+    margin: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary);
+    -webkit-tap-highlight-color: transparent;
+}
+.nav-burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform .32s cubic-bezier(.4, 0, .2, 1), opacity .2s ease;
+}
+
+@media (max-width: 768px) {
+    .header-nav { position: relative; }
+    .nav-burger { display: flex; }       /* 手机端显示汉堡 */
+
+    /* 菜单 → 右上角下拉面板（默认收起） */
+    #menu {
+        position: absolute;
+        top: calc(var(--header-height) - 6px);
+        right: var(--gap);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: auto;
+        min-width: 132px;
+        padding: 6px 0;
+        margin: 0;
+        background: var(--entry);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+        overflow: hidden;
+        z-index: 30;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px) scale(0.98);
+        transform-origin: top right;
+        transition: opacity .26s ease, transform .26s cubic-bezier(.4, 0, .2, 1), visibility .26s;
+    }
+    #menu li { width: 100%; }
+    #menu li a {
+        display: block;
+        width: 100%;
+        padding: 9px 18px;
+        text-align: right;
+        opacity: 1;                      /* 面板内不用淡出，清晰可点 */
+    }
+    #menu li a:hover { background: var(--code-bg); }
+
+    /* 展开态 */
+    .header-nav.menu-open #menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    /* 汉堡 → ✕ */
+    .header-nav.menu-open .nav-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .header-nav.menu-open .nav-burger span:nth-child(2) { opacity: 0; }
+    .header-nav.menu-open .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+
+/* 减少动态偏好：关掉"跃起"位移（归档/系列章节），尊重无障碍设置 */
+@media (prefers-reduced-motion: reduce) {
+    .archive-entry-title,
+    .series-card-list li a { transition: font-weight .2s ease; }
+    .post-entry { transition: none; }
+    .archive-entry:hover .archive-entry-title,
+    .series-card-list li:hover a,
+    .post-entry:hover,
+    .post-entry:focus-within { transform: none; }
+}

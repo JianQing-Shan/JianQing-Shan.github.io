@@ -1,8 +1,7 @@
-{{- /* 自定义 head：正文中文用宋体(系统 Songti/SimSun)，英文用 Times New Roman(系统)。
-       思源宋体仅作为缺少系统宋体时的网络兜底字体加载。 */ -}}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+{{- /* 自定义 head：正文中文=系统宋体(Songti/SimSun)、英文=系统 Times New Roman。
+       不再加载 Google Fonts 网络宋体——它在国内/安卓加载不稳，会出现“半加载、宋黑混字”。
+       苹果/Windows 本就用系统宋体(字体栈里 Songti SC/SimSun 在前)，去掉它一字不变；
+       缺系统宋体的设备(多数安卓)优雅回退到其系统中文字体。 */ -}}
 
 {{- /* 文章所属系列：供返回键在“直链进入、无来路”时兜底跳回 /series/#系列 */ -}}
 {{- with .Params.series }}
