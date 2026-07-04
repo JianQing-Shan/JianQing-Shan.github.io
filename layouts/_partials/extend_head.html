@@ -7,3 +7,8 @@
 {{- with .Params.series }}
 <meta name="series" content="{{ index . 0 }}">
 {{- end }}
+
+{{- /* 深层页会注入返回箭头；提前标记，避免页头明暗按钮先显示再被 footer 脚本隐藏。 */ -}}
+{{- if or (and (eq .Kind "page") (eq .Section "posts")) (and (eq .Kind "term") (or (eq .Type "tags") (eq .Type "series"))) }}
+<script>document.documentElement.classList.add('has-post-back');</script>
+{{- end }}

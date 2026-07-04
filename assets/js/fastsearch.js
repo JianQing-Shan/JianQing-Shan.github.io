@@ -125,9 +125,11 @@ const buildSnippet = (item, matches, query) => {
         + (end < content.length ? '…' : '');
 };
 
-const renderResults = (results) => {
+const renderResults = (results, activeQuery = '') => {
     if (!Array.isArray(results) || results.length === 0) {
-        resList.innerHTML = '';
+        resList.innerHTML = activeQuery
+            ? '<li class="search-empty" role="status">没有找到相关内容。</li>'
+            : '';
         firstResult = lastResult = currentElement = null;
         return;
     }
@@ -184,7 +186,7 @@ const performSearch = () => {
 
     const searchOptions = params.fuseOpts?.limit ? { limit: params.fuseOpts.limit } : undefined;
     const results = searchOptions ? fuse.search(query, searchOptions) : fuse.search(query);
-    renderResults(results);
+    renderResults(results, query);
 };
 
 const initSearch = async () => {
