@@ -1,0 +1,59 @@
+/* =========================================================================
+   山渐清 · 外观定制层（PaperMod extended CSS，只覆盖、不改主题子模块）
+   设计基调：Tale 式极简 + 安静的中文阅读体验
+
+   字体：标题/正文/日期/主页标语=衬线（英文 Times New Roman + 中文宋体）；
+         导航·菜单·PREV/NEXT·标签·页脚=无衬线黑体（两套，不再用第三种字体）
+   配色：标题 #353535 / 正文 #555 / 次要 #aaa / 边框 #e5e5e5 / 链接 #4a9ae1
+   交互：“灵动”仅用于导航与索引（标题/列表/标签/搜索的悬停短黑线、阅读进度线、
+         浮动目录、返回箭头）；正文保持绝对安静，不加任何悬停效果
+   深色：全部走 CSS 变量，[data-theme="dark"] 下自动适配
+
+   加载机制：经 assets/css/extended/ 在 PaperMod 样式之后追加，沿用其变量体系。
+   ========================================================================= */
+
+/* ---------- 1. 调色板与节奏（对齐 Tale 变量） ---------- */
+:root {
+    --main-width: 760px;       /* Tale 容器约 800px */
+    --gap: 24px;
+    --content-gap: 22px;
+    --radius: 4px;
+
+    --theme: rgb(255, 255, 255);   /* $white  纯白 */
+    --entry: rgb(255, 255, 255);
+    --primary: rgb(53, 53, 53);    /* $default-shade #353535  标题 */
+    --content: rgb(85, 85, 85);    /* $default-color #555     正文 */
+    --secondary: rgb(170, 170, 170);/* $default-tint  #aaa     日期/次要 */
+    --grey1: rgb(151, 151, 151);   /* $grey-1 #979797  引用 */
+    --tertiary: rgb(229, 229, 229);
+    --border: rgb(229, 229, 229);  /* $grey-2 #e5e5e5  分割线/边框 */
+
+    --accent: rgb(74, 154, 225);   /* $blue #4a9ae1 */
+    --accent-strong: rgb(43, 121, 199);
+
+    /* 字体栈（Tale 同款） */
+    --serif: 'Times New Roman', Times, 'Songti SC', SimSun, STSong, 'Noto Serif SC', serif;
+    --sans: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', Helvetica, Arial, sans-serif;
+}
+
+:root[data-theme="dark"] {
+    --theme: rgb(27, 28, 30);
+    --entry: rgb(27, 28, 30);
+    --primary: rgb(225, 225, 223);
+    --content: rgb(186, 186, 184);
+    --secondary: rgb(128, 128, 126);
+    --grey1: rgb(150, 150, 148);
+    --tertiary: rgb(60, 61, 64);
+    --border: rgb(52, 53, 56);
+    --accent: rgb(110, 178, 235);
+    --accent-strong: rgb(150, 200, 240);
+}
+
+/* 列表页/首页的 body 会带 .list 类，主题默认给了灰底(#f5f5f5)，改回纯白 */
+.list {
+    background: var(--theme);
+}
+
+[data-theme="dark"] .list {
+    background: var(--theme);
+}

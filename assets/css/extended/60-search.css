@@ -1,0 +1,126 @@
+/* ========================================================================
+   搜索页：极简下划线输入框 + 无卡片结果列表
+   ======================================================================== */
+.searchbox input {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    border-radius: 0;
+    padding: 10px 2px;
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--primary);
+    background: transparent;
+    transition: border-color .2s ease;
+}
+
+.searchbox input::placeholder {
+    color: var(--secondary);
+    font-weight: 400;
+}
+
+.searchbox input:focus {
+    border-bottom-color: var(--primary);
+    outline: none;
+}
+
+/* 隐藏原生清除按钮（蓝色 ×） */
+.searchbox input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+.searchResults {
+    margin: var(--content-gap) 0;
+    gap: 0;
+}
+
+.searchResults li {
+    display: block;            /* 取消两端 flex 布局 */
+    position: relative;
+    border: none;              /* 去掉灰白分割线 */
+    border-radius: 0;
+    background: transparent;
+    padding: 15px 2px;         /* 条间更松：相邻结果间距 ≈30px，分组更清晰 */
+    color: var(--primary);
+}
+
+/* 点击层：覆盖整条（标题 + 片段任意处都可点） */
+.searchResults li .entry-link {
+    position: absolute;
+    inset: 0;
+}
+
+/* 跃起：覆盖 PaperMod 默认的 -2px，统一为 -1px（与归档/系列一致） */
+.searchResults li:hover,
+.searchResults li:focus-within,
+.searchResults li.focus {
+    transform: translateY(-1px);
+}
+
+/* 标题 */
+.searchResults li .search-title {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--primary);
+    transition: font-weight .2s ease;
+}
+.searchResults li:hover .search-title,
+.searchResults li:focus-within .search-title,
+.searchResults li.focus .search-title {
+    font-weight: 700;          /* 悬停只加粗标题 */
+}
+
+/* 标题与片段之间的灵动小黑线（仅悬停伸出） */
+.searchResults li .search-line {
+    display: block;
+    width: 0;
+    border-top: 2px solid var(--primary);
+    margin: 3px 0;             /* 条内更紧：标题↔片段 ≈8px，绑成一组 */
+    transition: width .3s ease;
+}
+.searchResults li:hover .search-line,
+.searchResults li.focus .search-line {
+    width: 2.4rem;
+}
+
+/* 命中正文片段（次要灰、较小、最多两行） */
+.searchResults li .search-snippet {
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.searchResults .search-empty {
+    margin: 1.2rem 2px 0;
+    padding: 0;
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--secondary);
+    pointer-events: none;
+    transform: none;
+}
+.searchResults li.search-empty:hover,
+.searchResults li.search-empty:focus-within,
+.searchResults li.search-empty.focus {
+    transform: none;
+}
+
+/* 关键词高亮：沿用全站“聚焦”语言——主色 + 加粗（无色块），在灰底片段里自然跳出 */
+.searchResults li .search-hl {
+    background: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* 去掉右侧 >> 箭头（保险） */
+.searchResults li svg {
+    display: none;
+}

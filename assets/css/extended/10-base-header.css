@@ -1,0 +1,63 @@
+/* ---------- 2. 基础排版：正文与标题均衬线（英文 TNR + 中文宋体） ---------- */
+body {
+    font-family: var(--serif);
+    color: var(--content);
+    font-size: 18px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--serif);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ---------- 3. 顶部导航：保持 PaperMod 原布局，仅做 Tale 描边 ---------- */
+.logo a {
+    font-family: var(--sans);
+    color: var(--content);
+    font-weight: 700;
+}
+
+.menu a {
+    font-family: var(--sans);
+    color: var(--content);
+    opacity: 0.6;
+    transition: opacity .2s ease;
+}
+
+.menu a:hover,
+.menu .active {
+    opacity: 1;
+    text-decoration: none;
+}
+
+/* 返回箭头：页头 logo 左侧的极简图标（仅文章/单标签等深层页，由 extend_footer.html 注入）。
+   绝对定位在「山渐清」左侧的空白处，不挤占 logo，保证各页 logo 位置一致 */
+.logo {
+    position: relative;
+}
+
+#post-back {
+    position: absolute;
+    right: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    font-size: 21px;
+    line-height: 1;
+    color: var(--secondary);
+    transition: color .2s ease, transform .2s ease;
+}
+
+#post-back:hover {
+    color: var(--primary);
+    transform: translateY(-50%) translateX(-3px);
+}
+
+/* ---------- 4. 隐藏列表/栏目页顶部的大标题（“文章”“归档”等） ---------- */
+.page-header {
+    display: none;
+}

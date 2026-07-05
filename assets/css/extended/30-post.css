@@ -1,0 +1,258 @@
+/* ---------- 6. 单篇文章页：日期在上 + 居中标题 ---------- */
+.post-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+/* 日期置于标题下方；两侧放上/下篇导航（❮ PREV / NEXT ❯），与底部统一 */
+.post-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 1.1rem;
+    font-family: var(--serif);
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;   /* 日期与 PREV/NEXT 全大写，整行一致；去掉本行=日期还原 June */
+    margin: 1rem 0 0 0;
+}
+
+/* 顶部：日期两侧的上/下篇（无衬线标签 + ❮ ❯）；.post-meta a 加权重盖掉默认点状下划线 */
+.post-meta .post-nav-arrow {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.22em;                 /* ❮ 与 PREV 间距收紧 */
+    font-family: var(--serif);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color .2s ease, transform .2s ease;
+}
+
+/* 雪佛龙字形 ❮ ❯ */
+.post-nav-arrow .pn-g {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.post-nav-arrow:hover { color: var(--primary); }
+.post-nav-arrow.prev:hover { transform: translateX(-3px); }
+.post-nav-arrow.next:hover { transform: translateX(3px); }
+
+/* 底部 上一篇/下一篇：去掉默认盒子，极简文本 + 顶部细分隔线 */
+.paginav {
+    margin-top: 2.5rem;
+    padding-top: 1.4rem;
+    border: none;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+}
+
+.paginav a {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0.2rem 0;
+    transition: transform .2s ease;
+}
+
+.paginav a:hover { background: transparent; }
+.paginav .prev:hover { transform: translateX(-3px); }
+.paginav .next:hover { transform: translateX(3px); }
+
+.paginav .title {
+    font-family: var(--serif);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: none;
+    color: var(--secondary);
+    transition: color .2s ease;
+}
+
+/* 与顶部统一：❮ PREV / NEXT ❯ */
+.paginav .prev .title::before { content: "❮ "; }
+.paginav .next { text-align: right; }
+.paginav .next .title::after { content: " ❯"; }
+
+.paginav span:not(.title) {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--primary);
+    transition: color .2s ease;
+}
+
+/* 悬停单色（不用强调色），与全站一致 */
+.paginav a:hover .title { color: var(--primary); }
+.paginav a:hover span:not(.title) { color: var(--primary); }
+
+/* 文末标签：太突兀，隐藏（保留 PaperMod 结构，仅不显示） */
+.post-tags { display: none; }
+
+.post-title {
+    display: block;
+    font-family: var(--serif);
+    color: var(--primary);
+    font-size: 40px;
+    line-height: 1.25;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- 7. 正文：衬线、舒展、链接 Tale 式悬停下划线 ---------- */
+.post-content {
+    font-family: var(--serif);
+    color: var(--content);
+    line-height: 1.85;
+}
+
+.post-content p {
+    margin: 0 0 1.1rem;
+}
+
+.post-content h1, .post-content h2, .post-content h3,
+.post-content h4, .post-content h5, .post-content h6 {
+    font-family: var(--serif);
+    color: var(--primary);
+    line-height: 1.35;          /* 多行标题更舒展（原 1.2 偏挤） */
+}
+
+/* 正文各级标题尺寸（参考 Notion：标题 40 / H1 30 / H2 24 / H3 20）
+   上松下紧：与上一节拉开、与本节正文贴近 */
+.post-content h1 { font-size: 30px; margin: 2.2rem 0 0.7rem; }
+.post-content h2 { font-size: 24px; margin: 2rem 0 0.6rem; }
+.post-content h3 { font-size: 20px; margin: 1.7rem 0 0.5rem; }
+.post-content h4 { font-size: 18px; margin: 1.5rem 0 0.5rem; }
+
+.post-content a,
+.entry-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.post-content a:hover,
+.entry-content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+}
+
+.post-content blockquote {
+    border-inline-start: 0.25rem solid var(--border);
+    color: var(--grey1);
+    font-style: normal;
+}
+
+.pdf-embed {
+    margin: 1.4rem 0;
+}
+.pdf-card {
+    display: none;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--code-bg);
+    color: var(--primary);
+    text-decoration: none;
+}
+.post-content .pdf-card {
+    color: var(--primary);
+    text-decoration: none;
+}
+.post-content.md-content a.pdf-card {
+    color: var(--primary);
+    text-decoration: none;
+}
+.pdf-card:hover {
+    text-decoration: none;
+}
+.post-content .pdf-card:hover {
+    text-decoration: none;
+}
+.post-content.md-content a.pdf-card:hover {
+    text-decoration: none;
+}
+.pdf-card-type {
+    flex: 0 0 auto;
+    padding: 0.15rem 0.35rem;
+    border: 1px solid var(--tertiary);
+    border-radius: 4px;
+    color: var(--secondary);
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0;
+}
+.pdf-card-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+.pdf-card-action {
+    margin-left: auto;
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 14px;
+}
+.pdf-embed iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: min(720px, 78vh);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--code-bg);
+}
+.pdf-embed figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.45rem;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--secondary);
+}
+.pdf-embed figcaption span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .post-title {
+        font-size: 34px;
+        word-break: break-all;
+    }
+    .pdf-card {
+        display: grid;
+    }
+    .pdf-embed iframe {
+        display: none;
+    }
+    .pdf-embed figcaption {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .pdf-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+    .pdf-card-action {
+        grid-column: 2;
+        justify-self: start;
+        margin-left: 0;
+    }
+}

@@ -1,0 +1,61 @@
+/* ========================================================================
+   标签索引页：极简标签云（药丸）
+   浅灰填充；悬停灵动黑色边框（黑边淡入 + 轻微上浮）
+   ======================================================================== */
+.terms-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+    margin-top: 2.2rem;
+    padding: 0;
+}
+
+.terms-tags li {
+    display: inline-block;
+    font-weight: 400;
+}
+
+.terms-tags a {
+    display: block;
+    position: relative;                /* 角标定位 */
+    background: var(--code-bg);
+    border: 1.5px solid transparent;   /* 预留边框位，悬停不跳动 */
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--primary);
+    transition: border-color .2s ease, background .2s ease, transform .2s ease, font-weight .2s ease;
+}
+
+/* 右上角篇数角标：浅灰底 + 深字小角标（折中） */
+.terms-tags .tag-count {
+    position: absolute;
+    top: -6px;
+    right: -3px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--tertiary);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 16px;
+    text-align: center;
+    box-shadow: 0 0 0 1.5px var(--theme);   /* 细白边与药丸分隔 */
+    transition: background .2s ease, color .2s ease;
+}
+
+/* 悬停时角标变深，与黑色边框呼应 */
+.terms-tags a:hover .tag-count {
+    background: var(--primary);
+    color: var(--theme);
+}
+
+.terms-tags a:hover {
+    background: var(--theme);
+    border-color: var(--primary);     /* 灵动黑色边框 */
+    font-weight: 700;                  /* 选中加粗 */
+    transform: translateY(-1px);
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="auto" data-theme="auto">
+<html lang="zh-cn" dir="auto" data-theme="auto">
 
 <head>
 	<meta name="generator" content="Hugo 0.163.3"><meta charset="utf-8">
@@ -11,7 +11,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="https://JianQing-Shan.github.io/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.c358bcf39ea51144e18980020a5219c05ede1f602bbc5c7c9a4d8ae29339f602.css" integrity="sha256-w1i8856lEUThiYACClIZwF7eH2ArvFx8mk2K4pM59gI=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.afdfea11566fa19abe3345f529440604797d4a223b6d69025fc653aaefdbbb78.css" integrity="sha256-r9/qEVZvoZq&#43;M0X1KUQGBHl9SiI7bWkCX8ZTqu/bu3g=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://JianQing-Shan.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://JianQing-Shan.github.io/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://JianQing-Shan.github.io/favicon-32x32.png">
@@ -21,7 +21,7 @@
 <meta name="msapplication-TileColor" content="#2e2e33">
 <link rel="alternate" type="application/rss+xml" href="https://JianQing-Shan.github.io/index.xml" title="rss">
 <link rel="alternate" type="application/json" href="https://JianQing-Shan.github.io/index.json" title="json">
-<link rel="alternate" hreflang="en" href="https://JianQing-Shan.github.io/">
+<link rel="alternate" hreflang="zh-cn" href="https://JianQing-Shan.github.io/">
 <noscript>
     <style>
         #theme-toggle,
@@ -176,92 +176,8 @@
         <polyline points="17 11 12 6 7 11"></polyline>
         <polyline points="17 18 12 13 7 18"></polyline>
     </svg>
-</a><script>
-(function () {
-  function fromList(sel) {
-    return [].map.call(document.querySelectorAll(sel), function (a) {
-      return { u: a.pathname, t: (a.getAttribute('aria-label') || a.textContent || '').trim() };
-    });
-  }
-  function ctxOf(link) {
-    var card = link.closest && link.closest('.series-card-list');
-    if (card) {
-      return [].map.call(card.querySelectorAll('li > a'), function (a) {
-        return { u: a.pathname, t: (a.textContent || '').trim() };
-      });
-    }
-    if (link.closest('.searchResults')) return fromList('.searchResults li .entry-link');
-    if (link.closest('.archive-entry')) return fromList('.archive-entry .entry-link');
-    if (link.closest('.post-entry, .first-entry')) return fromList('.first-entry .entry-link, .post-entry .entry-link');
-    return null;
-  }
-  document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('a[href]');
-    if (!a) return;
-    if (a.id === 'post-back' || a.closest('.post-nav-arrow') || a.closest('.paginav')) return;
-    var list = ctxOf(a);
-    if (list && list.length) {
-      try {
-        sessionStorage.setItem('nav-ctx', JSON.stringify(list));
-        sessionStorage.setItem('nav-from', location.pathname + location.search + location.hash);  
-      } catch (err) {}
-    }
-  }, true);
-
-  
-  (function () {
-    var anchor;
-    try { anchor = sessionStorage.getItem('nav-anchor'); } catch (e) { return; }
-    if (!anchor) return;
-    try { sessionStorage.removeItem('nav-anchor'); } catch (e) {}
-    var links = document.querySelectorAll('.entry-link, .series-card-list a');
-    for (var i = 0; i < links.length; i++) {
-      if (links[i].pathname === anchor) {
-        var row = links[i].closest('.post-entry, .first-entry, .archive-entry, .series-card-list li') || links[i];
-        row.scrollIntoView({ block: 'center' });
-        row.classList.add('nav-return-flash');
-        setTimeout(function () { row.classList.remove('nav-return-flash'); }, 1000);
-        break;
-      }
-    }
-  })();
-
-  
-  if (location.pathname.indexOf('/search') === 0) {
-    var sinp = document.getElementById('searchInput');
-    var sres = document.getElementById('searchResults');
-    if (sinp && sres) {
-      sinp.addEventListener('input', function () {
-        var v = sinp.value.trim();
-        history.replaceState(null, '', v ? (location.pathname + '?query=' + encodeURIComponent(v)) : location.pathname);
-      });
-      
-      sres.addEventListener('click', function (e) {
-        if (e.target.closest && e.target.closest('a.entry-link')) {
-          try { sessionStorage.setItem('search-cache', JSON.stringify({ q: sinp.value, html: sres.innerHTML })); } catch (err) {}
-        }
-      }, true);
-      
-      var q = new URLSearchParams(location.search).get('query');
-      if (q) {
-        sinp.value = q;
-        var cache = null;
-        try { cache = JSON.parse(sessionStorage.getItem('search-cache') || 'null'); } catch (err) {}
-        if (cache && cache.q === q && cache.html) {
-          sres.innerHTML = cache.html;
-        } else {
-          var tries = 0;
-          var timer = setInterval(function () {
-            sinp.dispatchEvent(new Event('input', { bubbles: true }));
-            if (sres.children.length || ++tries > 12) clearInterval(timer);
-          }, 250);
-        }
-      }
-    }
-  }
-
-})();
-</script>
+</a>
+<script defer crossorigin="anonymous" src="/assets/js/site.min.882118dc6d55842fcbc77e4688e677721c60fe08011c4f66cdc2be558a2172d5.js" integrity="sha256-iCEY3G1VhC/Lx35GiOZ3chxg/ggBHE9mzcK&#43;VYohctU="></script>
 
 
 <script>

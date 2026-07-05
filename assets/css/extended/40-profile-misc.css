@@ -1,0 +1,43 @@
+/* ---------- 8. 头像主页（profileMode） ---------- */
+.profile .profile_inner h1 {
+    font-family: var(--serif);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.profile .profile_inner span,
+.profile .profile_inner b,
+.profile .profile_inner p {
+    font-family: var(--serif);
+    font-style: normal;
+    color: var(--secondary);
+    font-weight: 400;
+}
+
+.profile img {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 9. 分页 / 页脚 / 杂项 ---------- */
+.pagination a {
+    background: transparent;
+    color: var(--content);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    transition: color .2s ease, border-color .2s ease;
+}
+
+.pagination a:hover {
+    color: var(--accent-strong);
+    border-color: var(--accent);
+}
+
+.footer {
+    font-family: var(--sans);
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+}

@@ -37,11 +37,21 @@
 {{- if ne .Key "0001" }}
 <div class="archive-year">
   {{- $year := replace .Key "0001" "" }}
-  <h2 class="archive-sr-only">{{ $year }}</h2>
+  <h2 class="archive-year-header" id="{{ $year }}">
+    <span class="archive-header-link">
+      {{- $year -}}
+    </span>
+    <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
+  </h2>
   {{- /* 月份用 3 字母缩写（Jan/Mar/Sep），适配窄栏时间轴标签、避免长月名换行 */ -}}
   {{- range .Pages.GroupByDate "Jan" }}
-  <h3 class="archive-sr-only">{{ $year }} {{ .Key }}</h3>
   <div class="archive-month">
+    <h3 class="archive-month-header" id="{{ $year }}-{{ .Key }}">
+      <span class="archive-header-link">
+        {{- .Key -}}
+      </span>
+      <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
+    </h3>
     <div class="archive-posts">
       {{- range .Pages }}
       {{- if eq .Kind "page" }}
@@ -65,20 +75,8 @@
       {{- end }}
       {{- end }}
     </div>
-    <div class="archive-month-header" id="{{ $year }}-{{ .Key }}" aria-hidden="true">
-      <span class="archive-header-link">
-        {{- .Key -}}
-      </span>
-      <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
-    </div>
   </div>
   {{- end }}
-  <div class="archive-year-header" id="{{ $year }}" aria-hidden="true">
-    <span class="archive-header-link">
-      {{- $year -}}
-    </span>
-    <sup class="archive-count">&nbsp;{{ len .Pages }}</sup>
-  </div>
 </div>
 {{- end }}
 {{- end }}

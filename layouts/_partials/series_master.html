@@ -1,0 +1,34 @@
+{{- /* 系列：单页主从——左侧系列名，点击在右侧展开该系列的连载卡片
+     (仿归档：竖线+节点，data-num 序号代替日期；文章按 series-order 排)。
+     交互逻辑在 assets/js/site/series-master.js。 */ -}}
+<div class="series-master" id="series-master">
+  <div class="series-names">
+    {{- range $i, $e := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- with site.GetPage (printf "/series/%s" $name) }}
+      <button type="button" class="series-name-item" data-key="{{ $name }}">{{ .LinkTitle }}</button>
+      {{- end }}
+    {{- end }}
+  </div>
+  <div class="series-detail" aria-live="polite">
+    {{- range $i, $e := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- with site.GetPage (printf "/series/%s" $name) }}
+      <div class="series-card" data-key="{{ $name }}" hidden>
+        <div class="series-card-head">
+          <button type="button" class="series-sort" aria-label="正序 / 倒序" title="正序 / 倒序（点击切换）">
+            <span class="series-sort-ico">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 13 12 8 18 13"></polyline><polyline points="6 18 12 13 18 18"></polyline></svg>
+            </span>
+          </button>
+        </div>
+        <ol class="series-card-list">
+          {{- range $idx, $p := (.Pages.ByParam "series-order") }}
+          <li><a data-num="{{ printf "%02d" (add $idx 1) }}" href="{{ $p.Permalink }}">{{ $p.Title }}</a></li>
+          {{- end }}
+        </ol>
+      </div>
+      {{- end }}
+    {{- end }}
+  </div>
+</div>

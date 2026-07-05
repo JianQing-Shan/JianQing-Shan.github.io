@@ -5,3 +5,4 @@ resources/
 .DS_Store
 /content/posts/.obsidian/
 /AGENTS.md
+assets/jsconfig.json

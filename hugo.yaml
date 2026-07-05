@@ -2,6 +2,7 @@
 baseURL: "https://JianQing-Shan.github.io/"
 title: "山渐清"
 theme: "PaperMod"
+defaultContentLanguage: "zh-cn"
 publishDir: "docs"
 cleanDestinationDir: true   # 每次构建清掉 docs/ 旧产物，避免删稿后残留
 
@@ -14,7 +15,6 @@ cascade:
     build:
       render: never
 locale: "zh-cn"
-buildFuture: true
 
 taxonomies:
   tag: tags

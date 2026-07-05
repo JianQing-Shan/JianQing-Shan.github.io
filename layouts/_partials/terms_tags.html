@@ -1,0 +1,13 @@
+{{- /* 标签等其它分类：极简药丸云 */ -}}
+<div class="tags-index">
+  <ul class="terms-tags">
+    {{- $type := .Type }}
+    {{- range $key, $value := .Data.Terms.Alphabetical }}
+      {{- $name := .Name }}
+      {{- $count := .Count }}
+      {{- with site.GetPage (printf "/%s/%s" $type $name) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}<span class="tag-count">{{ $count }}</span></a></li>
+      {{- end }}
+    {{- end }}
+  </ul>
+</div>
