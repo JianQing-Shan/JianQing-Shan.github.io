@@ -1,0 +1,2 @@
+1.如何添加pdf文件预览
+{{< pdf src="/posts/../....pdf" title="..." >}}

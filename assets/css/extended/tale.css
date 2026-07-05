@@ -117,10 +117,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-50%) translateX(-3px);
 }
 
-.has-post-back .logo-switches {
-    display: none;
-}
-
 /* ---------- 4. 隐藏列表/栏目页顶部的大标题（“文章”“归档”等） ---------- */
 .page-header {
     display: none;
@@ -297,6 +293,8 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
     font-size: 40px;
     line-height: 1.25;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 /* ---------- 7. 正文：衬线、舒展、链接 Tale 式悬停下划线 ---------- */
@@ -340,6 +338,113 @@ h1, h2, h3, h4, h5, h6 {
     border-inline-start: 0.25rem solid var(--border);
     color: var(--grey1);
     font-style: normal;
+}
+
+.pdf-embed {
+    margin: 1.4rem 0;
+}
+.pdf-card {
+    display: none;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--code-bg);
+    color: var(--primary);
+    text-decoration: none;
+}
+.post-content .pdf-card {
+    color: var(--primary);
+    text-decoration: none;
+}
+.post-content.md-content a.pdf-card {
+    color: var(--primary);
+    text-decoration: none;
+}
+.pdf-card:hover {
+    text-decoration: none;
+}
+.post-content .pdf-card:hover {
+    text-decoration: none;
+}
+.post-content.md-content a.pdf-card:hover {
+    text-decoration: none;
+}
+.pdf-card-type {
+    flex: 0 0 auto;
+    padding: 0.15rem 0.35rem;
+    border: 1px solid var(--tertiary);
+    border-radius: 4px;
+    color: var(--secondary);
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0;
+}
+.pdf-card-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+.pdf-card-action {
+    margin-left: auto;
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 14px;
+}
+.pdf-embed iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-height: min(720px, 78vh);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--code-bg);
+}
+.pdf-embed figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.35rem 0.75rem;
+    margin-top: 0.45rem;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--secondary);
+}
+.pdf-embed figcaption span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+    .post-title {
+        font-size: 34px;
+        word-break: break-all;
+    }
+    .pdf-card {
+        display: grid;
+    }
+    .pdf-embed iframe {
+        display: none;
+    }
+    .pdf-embed figcaption {
+        display: none;
+    }
+}
+
+@media (max-width: 420px) {
+    .pdf-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+    .pdf-card-action {
+        grid-column: 2;
+        justify-self: start;
+        margin-left: 0;
+    }
 }
 
 /* ---------- 8. 头像主页（profileMode） ---------- */
@@ -794,7 +899,7 @@ h1, h2, h3, h4, h5, h6 {
     content: "";
     position: absolute;
     left: 30px;
-    top: 20px;
+    top: 28.2px;
     height: 100%;
     width: 2px;
     background: var(--border);
@@ -805,18 +910,19 @@ h1, h2, h3, h4, h5, h6 {
     content: "";
     position: absolute;
     left: 27px;
-    top: 16px;
+    top: 28.2px;
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: var(--secondary);
     box-shadow: 0 0 0 3px var(--theme);
+    transform: translateY(-50%);
     transition: background .2s ease, transform .2s ease;
 }
 
 .series-card-list li:hover::after {
     background: var(--primary);
-    transform: scale(1.3);
+    transform: translateY(-50%) scale(1.3);
 }
 
 .series-card-list li a {
@@ -836,9 +942,11 @@ h1, h2, h3, h4, h5, h6 {
     content: attr(data-num);
     position: absolute;
     left: -56px;
-    top: 1px;
+    top: 11.2px;
+    transform: translateY(-50%);
     font-family: var(--serif);
     font-size: 13px;
+    line-height: 1;
     color: var(--secondary);
 }
 
@@ -966,28 +1074,55 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
 }
 
-/* 年份：整年文章上方的标题 + 淡淡的分隔线 */
+.archive-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 年份：作为倒序时间轴的年份起点，放在该年最早月份之后 */
 .archive-year-header {
-    width: auto;
-    margin: 0 0 0.2rem;
-    padding-bottom: 0.45rem;
-    text-align: left;
+    position: relative;
+    width: 80px;
+    margin: 0.35rem 0 0;
+    padding: 0 16px 0 0;
+    text-align: center;
     font-family: var(--serif);
     font-size: 27px;
     font-weight: 700;
+    line-height: 1.2;
     color: var(--primary);
-    border-bottom: 1px solid var(--border);
+    border-bottom: none;
 }
 
 .archive-year-header .archive-count { display: none; }
 
-/* 竖线：从年份分隔线下方一路贯通到最后一个点 */
+.archive-year-header::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: 0 0 0 3px var(--theme);
+    transform: translateY(-50%);
+}
+
+/* 竖线：从该年最新文章点贯通到年份起点 */
 .archive-year::before {
     content: "";
     position: absolute;
     left: 76px;
-    top: 42px;
-    bottom: 18px;
+    top: 22px;
+    bottom: 16.2px;
     width: 2px;
     background: var(--border);
 }
@@ -998,17 +1133,21 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     margin: 0;
 }
+.archive-month:not(:last-of-type) {
+    border-bottom: none;
+}
 
-/* 月份：左侧标签，自成一行，右侧带一个更醒目的节点 */
+/* 月份：作为倒序时间轴的月份起点，放在该月最早文章之后 */
 .archive-month-header {
     position: relative;
-    width: 68px;
-    margin: 1.1rem 0 0.2rem;
+    width: 80px;
+    margin: 0.25rem 0 1.15rem;
     padding: 0 16px 0 0;
-    text-align: right;
+    text-align: center;
     font-family: var(--serif);
     font-size: 25px;
     font-weight: 700;
+    line-height: 1.2;
     color: var(--primary);
 }
 
@@ -1018,13 +1157,14 @@ h1, h2, h3, h4, h5, h6 {
 .archive-month-header::after {
     content: "";
     position: absolute;
-    right: -12px;
-    top: 0.55em;
+    right: -1px;
+    top: 50%;
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: var(--secondary);
     box-shadow: 0 0 0 3px var(--theme);   /* 白色光环遮住主线 */
+    transform: translateY(-50%);
 }
 
 .archive-posts {
@@ -1046,7 +1186,7 @@ h1, h2, h3, h4, h5, h6 {
     content: "";
     position: absolute;
     left: 72px;
-    top: 15px;
+    top: 18px;
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -1058,17 +1198,6 @@ h1, h2, h3, h4, h5, h6 {
 .archive-entry:hover::before {
     background: var(--primary);
     transform: scale(1.3);
-}
-
-/* 竖线收到最后一个点：用页面色挡掉"该年最后一篇"圆点以下的线段 */
-.archive-month:last-child .archive-entry:last-child::after {
-    content: "";
-    position: absolute;
-    left: 73px;
-    top: 26px;
-    width: 8px;
-    height: 999px;
-    background: var(--theme);
 }
 
 /* 标题：仅悬停时短黑线从无到有伸出（不常驻） */
@@ -1200,7 +1329,6 @@ h1, h2, h3, h4, h5, h6 {
         column-gap: 6px;
     }
     .logo a { font-size: 22px; }
-    .logo-switches { display: none; }
     #menu { column-gap: 9px; }
     #menu li a { font-size: 16px; }
 }
