@@ -27,9 +27,8 @@ git submodule update --init --recursive
 
 1. 在 `content/posts/` 新建或修改文章。
 2. 运行 `hugo server -D` 本地预览。
-3. 确认没问题后运行 `hugo` 生成网站。
-4. 用 Git 提交并上传。
-5. GitHub Pages 会发布 `docs/` 里的网页文件。
+3. 用 Git 提交并上传源码。
+4. 需要正式更新网站时，再去 GitHub Actions 手动发版。
 
 ## 目录怎么看
 
@@ -39,7 +38,8 @@ git submodule update --init --recursive
 - `static/`：图片、PDF、头像、站点图标等静态文件。
 - `static/img/avatar.jpeg`：首页头像。
 - `hugo.yaml`：网站标题、菜单、头像、GitHub 链接等配置。
-- `docs/`：发布用的网站成品，由 `hugo` 自动生成，不要手动改。
+- `public/`：本地生成的网站成品，已被 Git 忽略，不需要提交。
+- `docs/`：旧的发布成品目录，不要手动改；现在正式发版由 GitHub Actions 生成。
 - `layouts/`：页面模板，想改页面结构时才需要碰。
 - `assets/`：样式和脚本，想改外观或交互时才需要碰。
 - `themes/PaperMod/`：博客主题，不建议直接修改。
@@ -57,6 +57,18 @@ git submodule update --init --recursive
 - `menu.main`：顶部菜单。
 
 如果使用自定义域名，还要修改 `static/CNAME`。如果不用自定义域名，可以删除这个文件。
+
+## 启用手动发版
+
+这个模板已经准备了手动发版流程，文件在 `.github/workflows/deploy.yml`。
+
+第一次使用前，需要在 GitHub 仓库里设置一次：
+
+1. 打开仓库的 `Settings`。
+2. 进入 `Pages`。
+3. 在 `Build and deployment` 里，把 `Source` 改成 `GitHub Actions`。
+
+设置好以后，平时 `git push` 只会上传源码，不会自动更新网站。只有手动运行发版流程时，线上博客才会更新。
 
 ## 写一篇新博客
 
@@ -158,24 +170,38 @@ http://localhost:1313/
 - 图片和 PDF 是否显示。
 - 标签、系列、归档、搜索是否能找到文章。
 
-## 发布博客
+## 只上传源码
 
-每次发布前先生成网站：
+平时写完文章，只想保存和上传源码时，用：
+
+```bash
+git status
+git add -A
+git commit -m "更新博客源码"
+git push origin main
+```
+
+这一步不会正式发版。因为网站成品会生成到 `public/`，而 `public/` 不会被提交。
+
+## 手动发版
+
+需要更新线上博客时：
+
+1. 打开 GitHub 仓库页面。
+2. 进入 `Actions`。
+3. 选择 `Deploy blog`。
+4. 点击 `Run workflow`。
+5. 选择 `main` 分支并确认运行。
+
+GitHub 会自动构建 Hugo 网站并发布到 GitHub Pages。完成后访问你的博客地址即可。
+
+如果想在本地先做一次生产构建检查，可以运行：
 
 ```bash
 hugo
 ```
 
-然后提交并上传：
-
-```bash
-git status
-git add -A
-git commit -m "更新博客"
-git push origin main
-```
-
-上传后，GitHub Pages 会用 `docs/` 里的文件发布网站。稍等一会儿访问你的博客地址。
+`public/` 是本地临时生成目录，已经被忽略，不需要提交。
 
 当前示例地址是：
 
@@ -190,12 +216,13 @@ https://JianQing-Shan.github.io/
 - 每篇文章的 `slug` 不要重复。
 - 文件名可以用中文，但 `slug` 建议用英文。
 - 图片尽量压缩后再上传，页面会打开得更快。
-- 不要手动修改 `docs/`，它会在下一次运行 `hugo` 时被重新生成。
+- 不要手动修改或提交 `docs/`，现在发版由 GitHub Actions 完成。
+- 不要提交 `public/`，它只是本地构建出来的临时目录。
 
 ## 常见问题
 
 - 看不到新文章：检查 `draft` 是否为 `false`，`date` 是否是未来时间。
-- 本地能看到，线上看不到：确认运行过 `hugo`，并且把 `docs/` 一起提交上传了。
+- 本地能看到，线上看不到：确认是否已经在 GitHub Actions 里手动运行过 `Deploy blog`。
 - 图片不显示：检查文件是否放在 `static/` 下，文章里的路径是否以 `/` 开头。
 - 样式没变化：刷新浏览器缓存，或确认改的是 `assets/css/extended/` 里的文件。
 - 主题丢失：运行 `git submodule update --init --recursive`。
