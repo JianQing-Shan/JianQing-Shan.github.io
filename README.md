@@ -79,8 +79,7 @@ git submodule update --init --recursive
 title: "我的新文章"
 date: 2026-09-06T20:00:00+08:00
 draft: false
-tags:
-  - 随笔
+tags: 随笔
 slug: my-new-post
 ---
 
